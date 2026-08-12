@@ -11,10 +11,10 @@ for that version.
 
 ### Added
 
-- ESLint 9 flat config: framework-agnostic base plus an optional React variant (React, React
-  Hooks, and JSX accessibility rules).
-- Prettier configuration: import sorting, canonical `package.json` key ordering,
-  Tailwind-friendly overrides, per-filetype rules.
+- ESLint 9 flat config: framework-agnostic base plus an optional React variant (React, React Hooks,
+  and JSX accessibility rules).
+- Prettier configuration: import sorting, canonical `package.json` key ordering, Tailwind-friendly
+  overrides, per-filetype rules.
 - Shared `tsconfig.json` bases: Node, React, React Native, and their Vite/Vitest/Storybook
   combinations.
 - Shared [tsdown](https://tsdown.dev) build defaults for libraries.
