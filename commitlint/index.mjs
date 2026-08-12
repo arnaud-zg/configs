@@ -1,5 +1,5 @@
 /**
- * Conventional Commits, with a mandatory scope (`type(scope): subject`) — config-conventional
+ * Conventional Commits, with a mandatory scope (`type(scope): subject`). config-conventional
  * alone leaves scope optional.
  */
 export default {

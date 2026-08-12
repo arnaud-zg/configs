@@ -30,7 +30,7 @@ describe("lefthook.yml extends chain", () => {
 
 // commitlint.config.mjs at the repo root extends ./commitlint/index.mjs, so this exercises the
 // exact same rules a consumer gets from @arnaud-zg/configs/commitlint, auto-discovered the same
-// way lefthook's commit-msg hook (`pnpm exec commitlint --edit {1}`) discovers it — no explicit
+// way lefthook's commit-msg hook (`pnpm exec commitlint --edit {1}`) discovers it, no explicit
 // --config.
 describe("commitlint (repo root config)", () => {
   let tmpDir: string | undefined;

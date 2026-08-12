@@ -67,8 +67,8 @@ ever grows into multiple packages that need coordinated releases.
 
 ## Why commitlint instead of a hand-rolled script
 
-The `commit-msg` hook used to run a hand-rolled shell script (`grep -qE` against a fixed pattern) —
-every wrinkle (merge/revert commits, the optional `[JIRA-1]` tag, breaking-change `!`) was a
+The `commit-msg` hook used to run a hand-rolled shell script (`grep -qE` against a fixed pattern).
+Every wrinkle (merge/revert commits, the optional `[JIRA-1]` tag, breaking-change `!`) was a
 manually maintained regex edge case. `commitlint` and `@commitlint/config-conventional` already
 encode that grammar as a maintained package; `@arnaud-zg/configs/commitlint` just extends it and
 adds one rule, a mandatory scope. Bonus: unlike the old script, `pnpm exec commitlint --edit {1}`

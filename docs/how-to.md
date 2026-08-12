@@ -76,7 +76,7 @@ export default base;
 Add `"prepare": "lefthook install"` to `package.json` so hooks install on `pnpm install`. Declare
 only what you're adding on top of the shared base (protect-`main`, Prettier formatting); `extends`
 merges the rest in. The shared `commit-msg` hook shells out to `pnpm exec commitlint --edit`, which
-is why it needs its own config — see [Enforce Conventional Commits](#enforce-conventional-commits).
+is why it needs its own config. See [Enforce Conventional Commits](#enforce-conventional-commits).
 
 ## Enforce Conventional Commits
 
