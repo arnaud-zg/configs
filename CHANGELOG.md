@@ -13,6 +13,8 @@ parser; remark-lint's no-undefined-references rule would otherwise flag every ve
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-08-12
+
 ### Added
 
 - `@arnaud-zg/configs/remark`: remark-lint's recommended preset, for a `.remarkrc.mjs` that lints
