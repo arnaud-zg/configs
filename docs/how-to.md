@@ -100,7 +100,7 @@ committing. After the PR merges:
 git checkout main && git pull
 VERSION=$(node -p "require('./package.json').version")
 NOTES=$(awk -v ver="$VERSION" 'BEGIN{gsub(/\./,"\\.",ver)} $0~"^## \\["ver"\\]"{f=1;next} /^## \[/{f=0} f' CHANGELOG.md)
-[ -n "$NOTES" ] || { echo "No CHANGELOG.md entry found for v$VERSION — was [Unreleased] moved into a dated section?" >&2; exit 1; }
+[ -n "$NOTES" ] || { echo "No CHANGELOG.md entry found for v$VERSION. Was [Unreleased] moved into a dated section?" >&2; exit 1; }
 git tag -a "v$VERSION" -m "v$VERSION" -m "$NOTES"
 git push --tags
 gh release create "v$VERSION" --title "v$VERSION" --notes "$NOTES"
