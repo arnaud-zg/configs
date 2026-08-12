@@ -1,0 +1,105 @@
+[🏠 Home](../README.md) · [🚀 Tutorial](./tutorial.md) · **🛠️ How-to** ·
+[📖 Reference](./reference.md) · [💡 Explanation](./explanation.md)
+
+# 🛠️ How-to guides
+
+Task recipes. See [Reference](./reference.md) for the full peer-dependency list.
+
+## Lint React code
+
+Use `/react` instead of the base config: it adds React, React Hooks, and JSX accessibility rules.
+
+```sh
+pnpm add -D eslint-plugin-react eslint-plugin-jsx-a11y eslint-plugin-react-hooks
+```
+
+```js
+// eslint.config.mjs
+import base from "@arnaud-zg/configs/eslint/react";
+```
+
+Pair with `tsconfig/react.json` or a Vite/Storybook/Vitest variant (see
+[Reference](./reference.md#tsconfig-variants)).
+
+## Pick a tsconfig variant
+
+- Plain Node → `node.json` (add `-vitest` for tests)
+- React web → `react.json`, or `react-vite.json` if bundling with Vite (add `-storybook` / `-vitest`
+  as needed)
+- React Native → `react-native.json` (same `-storybook` / `-vitest` suffixes)
+- Library that emits `.d.ts` → `internal-package.json`
+
+```json
+// tsconfig.json
+{
+  "extends": "@arnaud-zg/configs/tsconfig/react-vite.json",
+  "compilerOptions": { "outDir": "dist" },
+  "include": ["src"]
+}
+```
+
+## Configure a library build with tsdown
+
+```sh
+pnpm add -D tsdown typescript
+```
+
+```ts
+// tsdown.config.ts
+import { defineLibraryConfig } from "@arnaud-zg/configs/tsdown";
+
+export default defineLibraryConfig({ entry: ["src/index.ts"] });
+```
+
+Any `tsdown` option besides `entry` is an optional override. If your package hand-maintains its own
+multi-subpath `exports` map, add `exports: false` so the build doesn't overwrite it.
+
+## Add Git hooks with Lefthook
+
+```sh
+pnpm add -D lefthook prettier
+```
+
+```yaml
+# lefthook.yml
+extends:
+  - node_modules/@arnaud-zg/configs/lefthook/lefthook.yml
+```
+
+Add `"prepare": "lefthook install"` to `package.json` so hooks install on `pnpm install`. Declare
+only what you're adding on top of the shared base (protect-`main`, Prettier formatting, Conventional
+Commits); `extends` merges the rest in.
+
+## Run this repo's own tests
+
+For people working on `@arnaud-zg/configs` itself:
+
+```sh
+pnpm install
+pnpm typecheck && pnpm lint && pnpm format:check && pnpm test
+```
+
+## Release a new version
+
+`main` is protected, so the version bump happens on a branch first.
+
+```sh
+git checkout -b release/prep
+pnpm version patch --no-git-tag-version   # or minor / major
+VERSION=$(node -p "require('./package.json').version")
+git add package.json pnpm-lock.yaml CHANGELOG.md
+git commit -m "chore(release): v$VERSION"
+git push -u origin release/prep
+gh pr create --fill
+```
+
+Move `[Unreleased]` entries in [`CHANGELOG.md`](../CHANGELOG.md) into a dated section before
+committing. After the PR merges:
+
+```sh
+git checkout main && git pull
+git tag "v$(node -p "require('./package.json').version")"
+git push --tags
+pnpm publish --dry-run   # sanity-check first
+pnpm publish
+```
