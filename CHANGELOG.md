@@ -9,6 +9,8 @@ for that version.
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-08-12
+
 ### Added
 
 - ESLint 9 flat config: framework-agnostic base plus an optional React variant (React, React Hooks,
