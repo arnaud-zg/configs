@@ -11,4 +11,5 @@ for that version.
 
 ### Added
 
-- ESLint 9 flat config: framework-agnostic base plus an optional React Hooks variant.
+- ESLint 9 flat config: framework-agnostic base plus an optional React variant (React, React
+  Hooks, and JSX accessibility rules).
