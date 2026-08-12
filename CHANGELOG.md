@@ -13,3 +13,4 @@ for that version.
 
 - ESLint 9 flat config: framework-agnostic base plus an optional React variant (React, React
   Hooks, and JSX accessibility rules).
+- Prettier configuration: import sorting, Tailwind-friendly overrides, per-filetype rules.
