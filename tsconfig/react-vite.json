@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  /**
+   * React Vite Configuration
+   * Extends the base React configuration with Vite-specific settings
+   * for building web applications with Vite bundler.
+   */
+  "display": "React Vite",
+  "extends": "./react.json",
+  "compilerOptions": {
+    "types": ["node", "vite/client", "vite-plugin-svgr/client"]
+  },
+  "exclude": [
+    /* Test Files */
+    "${configDir}/src/**/*.spec.ts",
+    "${configDir}/src/**/*.test.ts",
+    "${configDir}/src/**/*.spec.tsx",
+    "${configDir}/src/**/*.test.tsx",
+    "${configDir}/src/**/*.spec.js",
+    "${configDir}/src/**/*.test.js",
+    "${configDir}/src/**/*.spec.jsx",
+    "${configDir}/src/**/*.test.jsx",
+    /* Storybook Files */
+    "${configDir}/src/**/*.stories.ts",
+    "${configDir}/src/**/*.stories.js",
+    "${configDir}/src/**/*.stories.jsx",
+    "${configDir}/src/**/*.stories.tsx",
+    /* Test Directories */
+    "${configDir}/**/__tests__/**/*.ts",
+    "${configDir}/**/__tests__/**/*.tsx"
+  ],
+  "include": [
+    /* Type Definitions */
+    "${configDir}/src/@types/*.d.ts",
+    /* Source Files */
+    "${configDir}/src/**/*.js",
+    "${configDir}/src/**/*.jsx",
+    "${configDir}/src/**/*.ts",
+    "${configDir}/src/**/*.tsx"
+  ]
+}

@@ -15,3 +15,5 @@ for that version.
   Hooks, and JSX accessibility rules).
 - Prettier configuration: import sorting, canonical `package.json` key ordering,
   Tailwind-friendly overrides, per-filetype rules.
+- Shared `tsconfig.json` bases: Node, React, React Native, and their Vite/Vitest/Storybook
+  combinations.

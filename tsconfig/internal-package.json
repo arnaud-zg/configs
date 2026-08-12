@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  /**
+   * Configuration for internal packages
+   * This configuration extends the base settings and configures TypeScript
+   * to emit type definitions for internal packages, optimizing the editor
+   * experience while keeping build performance high.
+   */
+  "extends": "./base.json",
+  "compilerOptions": {
+    /* Declaration Emission */
+    "declaration": true,
+    "declarationMap": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "outDir": "${configDir}/dist",
+    "noErrorTruncation": true
+  }
+}

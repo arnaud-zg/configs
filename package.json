@@ -25,11 +25,23 @@
   "exports": {
     "./eslint": "./eslint/base.mjs",
     "./eslint/react": "./eslint/react.mjs",
-    "./prettier": "./prettier/index.js"
+    "./prettier": "./prettier/index.js",
+    "./tsconfig/base.json": "./tsconfig/base.json",
+    "./tsconfig/node.json": "./tsconfig/node.json",
+    "./tsconfig/node-vitest.json": "./tsconfig/node-vitest.json",
+    "./tsconfig/react.json": "./tsconfig/react.json",
+    "./tsconfig/react-vite.json": "./tsconfig/react-vite.json",
+    "./tsconfig/react-vite-storybook.json": "./tsconfig/react-vite-storybook.json",
+    "./tsconfig/react-vitest.json": "./tsconfig/react-vitest.json",
+    "./tsconfig/react-native.json": "./tsconfig/react-native.json",
+    "./tsconfig/react-native-vitest.json": "./tsconfig/react-native-vitest.json",
+    "./tsconfig/react-native-vite-storybook.json": "./tsconfig/react-native-vite-storybook.json",
+    "./tsconfig/internal-package.json": "./tsconfig/internal-package.json"
   },
   "files": [
     "eslint",
     "prettier",
+    "tsconfig",
     "LICENSE"
   ],
   "prettier": "./prettier/index.js",

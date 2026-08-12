@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  /**
+   * React Native Configuration
+   * Extends the base configuration with React Native-specific settings
+   * for mobile applications and components.
+   */
+  "display": "Base React Native",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "lib": ["dom", "dom.iterable", "es2022"],
+    "jsx": "react-native"
+  },
+  "include": [".expo/types/**/*.ts"],
+  "exclude": [".expo"]
+}

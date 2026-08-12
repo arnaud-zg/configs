@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  /**
+   * Base TypeScript configuration for all packages
+   * This file defines the fundamental TypeScript settings used throughout the monorepo.
+   * It is extended by specialized configurations for specific package types.
+   */
+  "compileOnSave": false,
+  "compilerOptions": {
+    /* ------ Base Compiler Options ------ */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    /* ------ Monorepo Performance Optimization ------ */
+    "incremental": true,
+    "disableSourceOfProjectReferenceRedirect": true,
+    /* ------ Type Checking ------ */
+    "strict": true,
+    "strictNullChecks": true,
+    "noUncheckedIndexedAccess": true,
+    "checkJs": true,
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    /* ------ Module Resolution ------ */
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "allowSyntheticDefaultImports": true,
+    /* ------ Code Generation ------ */
+    /* Use rootDirs to handle cross-package imports */
+    "rootDirs": ["${configDir}", "../../"],
+    "sourceMap": true,
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    /* ------ Other ------ */
+    "noImplicitReturns": false,
+    "noUnusedLocals": false,
+    "forceConsistentCasingInFileNames": true,
+    "skipDefaultLibCheck": true
+  },
+  "exclude": ["node_modules", "build", "dist"]
+}

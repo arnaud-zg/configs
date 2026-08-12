@@ -1,0 +1,49 @@
+{
+  /**
+   * React Native Testing Configuration with Vitest
+   * Extends the React Native configuration with testing-specific settings
+   * for running tests with Vitest in React Native projects.
+   */
+  "extends": "./react-native.json",
+  "compilerOptions": {
+    "outDir": "${configDir}/dist",
+    "types": [
+      /* Testing Types */
+      "vitest/globals",
+      "vitest/importMeta",
+      "vitest",
+      "@testing-library/jest-dom",
+      /* Environment Types */
+      "node",
+      "vite/client",
+      "vite-plugin-svgr/client"
+    ]
+  },
+  "include": [
+    /* Test Setup Files */
+    "${configDir}/setupTests.ts",
+    "${configDir}/setupTests.tsx",
+    "${configDir}/vitest.setup.ts",
+    "${configDir}/vitest.global-setup.ts",
+    /* Configuration Files */
+    "${configDir}/vite.config.ts",
+    "${configDir}/vitest.config.ts",
+    /* Test Files */
+    "${configDir}/src/**/*.test.ts",
+    "${configDir}/src/**/*.spec.ts",
+    "${configDir}/src/**/*.test.tsx",
+    "${configDir}/src/**/*.spec.tsx",
+    "${configDir}/src/**/*.test.js",
+    "${configDir}/src/**/*.spec.js",
+    "${configDir}/src/**/*.test.jsx",
+    "${configDir}/src/**/*.spec.jsx",
+    /* Type Definitions */
+    "${configDir}/src/@types/*.d.ts",
+    "${configDir}/src/**/*.d.ts",
+    /* Test Support Files */
+    "${configDir}/mocks/**/*.ts",
+    "${configDir}/mocks/**/*.tsx",
+    "${configDir}/**/__tests__/**/*.ts",
+    "${configDir}/**/__tests__/**/*.tsx"
+  ]
+}
