@@ -17,3 +17,4 @@ for that version.
   Tailwind-friendly overrides, per-filetype rules.
 - Shared `tsconfig.json` bases: Node, React, React Native, and their Vite/Vitest/Storybook
   combinations.
+- Shared [tsdown](https://tsdown.dev) build defaults for libraries.
