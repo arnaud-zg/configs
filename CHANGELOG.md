@@ -9,6 +9,13 @@ for that version.
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-12
+
+### Fixed
+
+- Include `docs/` in the published npm package so the Diataxis guides (and the README links to them)
+  resolve from an installed package, not just the GitHub repo.
+
 ## [0.1.0] - 2026-08-12
 
 ### Added
