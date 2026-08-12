@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  /**
+   * React Web Configuration
+   * Extends the base configuration with React-specific settings
+   * for web applications and components.
+   */
+  "display": "Base React Web",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "es2022"],
+    "jsx": "react"
+  }
+}

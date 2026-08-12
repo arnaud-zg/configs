@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  /**
+   * Node.js Configuration
+   * Extends the base configuration with Node.js-specific settings
+   * for server-side applications and utilities.
+   */
+  "extends": "./base.json",
+  "display": "Base Node.js",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": false,
+    "incremental": true,
+    "noFallthroughCasesInSwitch": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strictNullChecks": false,
+    "strictBindCallApply": false
+  },
+  "include": ["src/**/*.ts", "src/**/*.js"],
+  "exclude": [
+    /* Test Setup Files */
+    "${configDir}/setupTests.ts",
+    "${configDir}/vitest.setup.ts",
+    "${configDir}/vitest.global-setup.ts",
+    /* Configuration Files */
+    "${configDir}/vite.config.ts",
+    "${configDir}/vitest.config.ts",
+    /* Test Files */
+    "${configDir}/src/**/*.test.ts",
+    "${configDir}/src/**/*.spec.ts",
+    "${configDir}/src/**/*.test.js",
+    "${configDir}/src/**/*.spec.js",
+    /* Type Definitions */
+    "${configDir}/src/@types/*.d.ts",
+    "${configDir}/src/**/*.d.ts",
+    /* Test Support Files */
+    "${configDir}/mocks/**/*.ts",
+    "${configDir}/**/__tests__/**/*.ts"
+  ]
+}
