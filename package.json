@@ -37,11 +37,15 @@
     "./tsconfig/react-native-vitest.json": "./tsconfig/react-native-vitest.json",
     "./tsconfig/react-native-vite-storybook.json": "./tsconfig/react-native-vite-storybook.json",
     "./tsconfig/internal-package.json": "./tsconfig/internal-package.json",
-    "./tsdown": "./tsdown/base.ts",
+    "./tsdown": {
+      "types": "./dist/base.d.ts",
+      "default": "./dist/base.js"
+    },
     "./lefthook/lefthook.yml": "./lefthook/lefthook.yml",
     "./lefthook/check-commit-msg.sh": "./lefthook/check-commit-msg.sh"
   },
   "files": [
+    "dist",
     "eslint",
     "prettier",
     "tsconfig",
@@ -51,11 +55,12 @@
     "LICENSE"
   ],
   "scripts": {
-    "build:check": "tsdown",
+    "build": "tsdown",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "prepack": "pnpm build",
     "prepare": "lefthook install",
     "test": "vitest run",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.vitest.json --noEmit"

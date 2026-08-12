@@ -17,8 +17,27 @@ const requiredPeersBySubpath: Record<string, string[]> = {
 };
 
 describe("a developer importing a subpath", () => {
-  test.each(Object.entries(pkg.exports))("can resolve %s", (_subpath, target) => {
+  // Every subpath except ./tsdown resolves straight to a checked-in source file, so its target
+  // exists on a fresh clone with no build step. ./tsdown resolves to built dist/ output instead
+  // (see __tests__/tsdown.test.ts and __tests__/tsdown-consumer.test.ts for why, and for coverage
+  // that the build actually produces it), so it's asserted separately below rather than requiring
+  // a build before this test file can run.
+  const sourceExports = Object.entries(pkg.exports).filter(
+    (entry): entry is [string, string] => typeof entry[1] === "string",
+  );
+
+  test.each(sourceExports)("can resolve %s", (_subpath, target) => {
     expect(existsSync(path.join(root, target))).toBe(true);
+  });
+
+  test("./tsdown resolves to built dist/ output, not raw source", () => {
+    // Raw tsdown/base.ts can't be the export target: unrun (tsdown's config loader) refuses to
+    // strip types for files resolved under node_modules, so a consumer's tsdown.config.ts
+    // importing this subpath would fail outright.
+    expect(pkg.exports["./tsdown"]).toEqual({
+      types: "./dist/base.d.ts",
+      default: "./dist/base.js",
+    });
   });
 });
 

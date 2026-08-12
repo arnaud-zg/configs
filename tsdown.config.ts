@@ -1,7 +1,11 @@
 import { defineLibraryConfig } from "./tsdown/base";
 
-// Smoke-tests the shared tsdown config by building tsdown/base.ts with itself. Output goes to
-// the gitignored dist/ — this is a self-check, not part of what gets published.
+// Builds tsdown/base.ts with itself. This is what package.json's "./tsdown" export actually
+// resolves to (dist/base.js + dist/base.d.ts) — raw TypeScript can't be published there because
+// unrun (tsdown's config loader) refuses to strip types for files resolved under node_modules, so
+// a consumer's tsdown.config.ts importing "@arnaud-zg/configs/tsdown" would fail outright. Runs
+// automatically via the "prepack" script before `pnpm pack` / `pnpm publish`; the gitignored
+// dist/ only exists after a build.
 //
 // exports: false — this package hand-maintains a multi-subpath exports map (eslint/prettier/
 // tsconfig/tsdown/lefthook); the shared config's default `exports: { legacy: true }` would
