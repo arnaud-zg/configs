@@ -9,6 +9,17 @@ for that version.
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-08-12
+
+### Fixed
+
+- `./tsdown` now resolves to a built `dist/base.js` instead of raw `tsdown/base.ts`. Publishing it
+  as source broke every consumer: the file is loaded directly by tsdown's own config loader
+  (`unrun`) when a `tsdown.config.ts` does
+  `import { defineLibraryConfig } from "@arnaud-zg/configs/tsdown"`, and Node's
+  `--experimental-strip-types` refuses to strip types for files resolved under `node_modules`, so
+  the import failed outright for every real consumer.
+
 ## [0.1.2] - 2026-08-12
 
 ### Fixed
