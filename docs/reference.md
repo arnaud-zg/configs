@@ -7,16 +7,16 @@
 
 Every peer is optional; install only what your chosen subpath needs.
 
-| Subpath                                           | Resolves to                                  | Required peers                                                                           |
-| ------------------------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `@arnaud-zg/configs/eslint`                       | `eslint/base.mjs`                            | `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-config-prettier`                    |
-| `@arnaud-zg/configs/eslint/react`                 | `eslint/react.mjs`                           | above, plus `eslint-plugin-react`, `eslint-plugin-jsx-a11y`, `eslint-plugin-react-hooks` |
-| `@arnaud-zg/configs/prettier`                     | `prettier/index.js`                          | `prettier`, `@ianvs/prettier-plugin-sort-imports`, `prettier-plugin-packagejson`         |
-| `@arnaud-zg/configs/tsconfig/*.json`              | `tsconfig/*.json` (variants below)           | `typescript`                                                                             |
-| `@arnaud-zg/configs/tsdown`                       | `dist/base.js` (built from `tsdown/base.ts`) | `tsdown`, `typescript`                                                                   |
-| `@arnaud-zg/configs/lefthook/lefthook.yml`        | `lefthook/lefthook.yml`                      | `lefthook`, `prettier`                                                                   |
-| `@arnaud-zg/configs/lefthook/check-commit-msg.sh` | `lefthook/check-commit-msg.sh`               | none                                                                                     |
-| `@arnaud-zg/configs/remark`                       | `remark/index.mjs`                           | `remark-cli`, `remark-preset-lint-recommended`                                           |
+| Subpath                                    | Resolves to                                  | Required peers                                                                           |
+| ------------------------------------------ | -------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `@arnaud-zg/configs/eslint`                | `eslint/base.mjs`                            | `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-config-prettier`                    |
+| `@arnaud-zg/configs/eslint/react`          | `eslint/react.mjs`                           | above, plus `eslint-plugin-react`, `eslint-plugin-jsx-a11y`, `eslint-plugin-react-hooks` |
+| `@arnaud-zg/configs/prettier`              | `prettier/index.js`                          | `prettier`, `@ianvs/prettier-plugin-sort-imports`, `prettier-plugin-packagejson`         |
+| `@arnaud-zg/configs/tsconfig/*.json`       | `tsconfig/*.json` (variants below)           | `typescript`                                                                             |
+| `@arnaud-zg/configs/tsdown`                | `dist/base.js` (built from `tsdown/base.ts`) | `tsdown`, `typescript`                                                                   |
+| `@arnaud-zg/configs/lefthook/lefthook.yml` | `lefthook/lefthook.yml`                      | `lefthook`, `prettier`, `@commitlint/cli`                                                |
+| `@arnaud-zg/configs/remark`                | `remark/index.mjs`                           | `remark-cli`, `remark-preset-lint-recommended`                                           |
+| `@arnaud-zg/configs/commitlint`            | `commitlint/index.mjs`                       | `@commitlint/cli`, `@commitlint/config-conventional`                                     |
 
 ## tsconfig variants
 
@@ -62,12 +62,13 @@ eslint/       base.mjs, react.mjs
 prettier/     index.js
 tsconfig/     base.json + 10 variants
 tsdown/       base.ts (source; not what consumers import, see below)
-lefthook/     lefthook.yml, check-commit-msg.sh
+lefthook/     lefthook.yml
 remark/       index.mjs
+commitlint/   index.mjs
 dist/         base.js, base.d.ts — built from tsdown/base.ts at publish time, gitignored otherwise
 __tests__/    this repo's own tests (not published)
 ```
 
-`package.json`'s `files` ships the seven directories above plus `LICENSE`. `dist/` doesn't exist in
+`package.json`'s `files` ships the eight directories above plus `LICENSE`. `dist/` doesn't exist in
 the repo itself — it's produced by the `prepack` script right before packing/publishing (see
 [Explanation](./explanation.md#why-tsdown-is-the-one-export-thats-built)).

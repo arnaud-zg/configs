@@ -17,6 +17,20 @@ parser; remark-lint's no-undefined-references rule would otherwise flag every ve
 
 - `@arnaud-zg/configs/remark`: remark-lint's recommended preset, for a `.remarkrc.mjs` that lints
   Markdown. Dogfooded in this repo (`pnpm lint:md`).
+- `@arnaud-zg/configs/commitlint`: `@commitlint/config-conventional` plus a mandatory scope, for a
+  `commitlint.config.mjs`.
+
+### Changed
+
+- `lefthook/lefthook.yml`'s `commit-msg` hook now runs `pnpm exec commitlint --edit {1}` instead of
+  a hand-rolled shell script, so it needs a `commitlint.config.mjs` in the consuming project
+  (extending `@arnaud-zg/configs/commitlint` or `@commitlint/config-conventional` directly) — see
+  [how-to.md](./docs/how-to.md#enforce-conventional-commits).
+
+### Removed
+
+- **Breaking:** `@arnaud-zg/configs/lefthook/check-commit-msg.sh`, replaced by commitlint (see
+  Changed above).
 
 ## [0.1.3] - 2026-08-12
 

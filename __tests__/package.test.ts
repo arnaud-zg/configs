@@ -13,8 +13,9 @@ const requiredPeersBySubpath: Record<string, string[]> = {
   "./eslint/react": ["eslint-plugin-react-hooks"],
   "./prettier": ["prettier", "@ianvs/prettier-plugin-sort-imports"],
   "./tsdown": ["tsdown"],
-  "./lefthook/lefthook.yml": ["lefthook"],
+  "./lefthook/lefthook.yml": ["lefthook", "@commitlint/cli"],
   "./remark": ["remark-cli", "remark-preset-lint-recommended"],
+  "./commitlint": ["@commitlint/cli", "@commitlint/config-conventional"],
 };
 
 describe("a developer importing a subpath", () => {
