@@ -91,6 +91,11 @@ remark . --frail --quiet
 found" info messages. A `.remarkignore` (`node_modules`, build output, etc.) keeps generated files
 out of the run.
 
+This only lints Markdown _content_ (broken references, missing final newline, etc.) — it has no
+`--output`/fix mode here. _Formatting_ `.md` files is Prettier's job, already covered if you set up
+`@arnaud-zg/configs/prettier` (see [Tutorial](./tutorial.md#4-add-prettier)): `pnpm format` /
+`pnpm format:check` handle Markdown the same as every other file type.
+
 ## Run this repo's own tests
 
 For people working on `@arnaud-zg/configs` itself:
