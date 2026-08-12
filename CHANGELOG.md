@@ -9,6 +9,23 @@ for that version.
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-08-12
+
+### Fixed
+
+- `eslint/react.mjs` now includes eslint-plugin-react's `jsx-runtime` config alongside
+  `recommended`. Without it, `react/react-in-jsx-scope` and `react/jsx-uses-react` false-positive on
+  every JSX file in projects using the automatic runtime (React 17+), which is the default for
+  virtually all current React/React Native/Expo projects.
+
+### Changed
+
+- Migrated `eslint/base.mjs`, `eslint/react.mjs`, and `eslint.config.mjs` off the deprecated
+  `tseslint.config()` helper onto ESLint core's `defineConfig()`. As part of this, `no-undef` is now
+  explicitly set to `"off"` in the shared ruleset rather than relying on a `tseslint.config()` quirk
+  that had been silently disabling it for `.js`/`.mjs`/`.cjs` files (behavior is unchanged, just
+  made explicit).
+
 ## [0.1.1] - 2026-08-12
 
 ### Fixed
