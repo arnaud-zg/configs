@@ -15,22 +15,17 @@ if (!reactRecommended) {
 /**
  * `base` plus React, React Hooks, and JSX accessibility rules for `.ts`/`.tsx` files.
  */
-export default tseslint.config(
-  ...base,
-  reactRecommended,
-  jsxA11y.flatConfigs.recommended,
-  {
-    files: ["**/*.{ts,tsx}"],
-    plugins: {
-      "react-hooks": reactHooks,
-    },
-    settings: {
-      react: { version: "detect" },
-    },
-    rules: {
-      ...reactHooks.configs.recommended.rules,
-      // TypeScript already enforces prop types via the type system.
-      "react/prop-types": "off",
-    },
+export default tseslint.config(...base, reactRecommended, jsxA11y.flatConfigs.recommended, {
+  files: ["**/*.{ts,tsx}"],
+  plugins: {
+    "react-hooks": reactHooks,
   },
-);
+  settings: {
+    react: { version: "detect" },
+  },
+  rules: {
+    ...reactHooks.configs.recommended.rules,
+    // TypeScript already enforces prop types via the type system.
+    "react/prop-types": "off",
+  },
+});
