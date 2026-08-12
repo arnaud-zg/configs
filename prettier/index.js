@@ -15,8 +15,8 @@ const config = {
   arrowParens: "always",
   endOfLine: "lf",
 
-  // Plugins for import sorting and Tailwind CSS class sorting
-  plugins: ["@ianvs/prettier-plugin-sort-imports"],
+  // Plugins for import sorting and canonical package.json key ordering
+  plugins: ["@ianvs/prettier-plugin-sort-imports", "prettier-plugin-packagejson"],
   importOrder: [
     "<TYPES>",
     "^(react/(.*)$)|^(react$)|^(react-native(.*)$)",

@@ -1,8 +1,6 @@
 {
   "name": "@arnaud-zg/configs",
   "version": "0.1.0",
-  "license": "MIT",
-  "author": "Arnaud Zheng <arnaud.zg@gmail.com>",
   "description": "Shareable dev-tooling configs: ESLint, Prettier, tsconfig, tsdown, and Lefthook.",
   "keywords": [
     "eslint-config",
@@ -14,18 +12,16 @@
     "shareable-config"
   ],
   "homepage": "https://github.com/arnaud-zg/configs#readme",
+  "bugs": {
+    "url": "https://github.com/arnaud-zg/configs/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/arnaud-zg/configs.git"
   },
-  "bugs": {
-    "url": "https://github.com/arnaud-zg/configs/issues"
-  },
-  "publishConfig": {
-    "access": "public"
-  },
+  "license": "MIT",
+  "author": "Arnaud Zheng <arnaud.zg@gmail.com>",
   "type": "module",
-  "prettier": "./prettier/index.js",
   "exports": {
     "./eslint": "./eslint/base.mjs",
     "./eslint/react": "./eslint/react.mjs",
@@ -36,6 +32,13 @@
     "prettier",
     "LICENSE"
   ],
+  "prettier": "./prettier/index.js",
+  "devDependencies": {
+    "@types/eslint-plugin-jsx-a11y": "^6.10.1",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "prettier-plugin-packagejson": "^3.0.2"
+  },
   "peerDependencies": {
     "@eslint/js": "^9.39.4",
     "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
@@ -45,6 +48,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "prettier": "^3.8.3",
+    "prettier-plugin-packagejson": "^3.0.2",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.60.0"
   },
@@ -73,6 +77,9 @@
     "prettier": {
       "optional": true
     },
+    "prettier-plugin-packagejson": {
+      "optional": true
+    },
     "typescript": {
       "optional": true
     },
@@ -80,9 +87,7 @@
       "optional": true
     }
   },
-  "devDependencies": {
-    "@types/eslint-plugin-jsx-a11y": "^6.10.1",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-react": "^7.37.5"
+  "publishConfig": {
+    "access": "public"
   }
 }
