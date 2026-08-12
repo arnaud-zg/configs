@@ -1,5 +1,6 @@
 import eslint from "@eslint/js";
 import prettier from "eslint-config-prettier";
+import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
 
 /**
@@ -7,7 +8,7 @@ import tseslint from "typescript-eslint";
  * compatibility. Does not configure `languageOptions.parserOptions` — the consuming
  * project supplies its own `project`/`projectService` pointing at its tsconfig(s).
  */
-export default tseslint.config(
+export default defineConfig(
   {
     ignores: [
       "**/node_modules/**",
@@ -26,6 +27,11 @@ export default tseslint.config(
     extends: [eslint.configs.recommended, ...tseslint.configs.recommended],
     rules: {
       "no-console": ["warn", { allow: ["warn", "error", "info"] }],
+      // tseslint.configs.recommended's `eslint-recommended` sub-config turns this off, but
+      // only for .ts/.tsx (its own `files` filter). This package doesn't configure any
+      // environment globals (node/browser/etc.), so leaving it on for .js/.mjs/.cjs would
+      // false-positive on any ambient global a consumer's runtime provides.
+      "no-undef": "off",
     },
   },
 

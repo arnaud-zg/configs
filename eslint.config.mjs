@@ -1,8 +1,8 @@
-import tseslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
 
 import base from "./eslint/base.mjs";
 
-export default tseslint.config(...base, {
+export default defineConfig(...base, {
   files: ["**/*.{ts,tsx}"],
   languageOptions: {
     parserOptions: {

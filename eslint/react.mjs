@@ -1,7 +1,7 @@
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
-import tseslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
 
 import base from "./base.mjs";
 
@@ -24,7 +24,7 @@ if (!reactJsxRuntime) {
  * automatic JSX runtime, where `react/react-in-jsx-scope` and `react/jsx-uses-react`
  * would otherwise false-positive on every file.
  */
-export default tseslint.config(
+export default defineConfig(
   ...base,
   reactRecommended,
   reactJsxRuntime,
