@@ -65,6 +65,16 @@ proportionate to run it for. A hand-maintained `CHANGELOG.md` and the native `pn
 (see below), so CI wouldn't add a review step that doesn't already exist. Revisit this if the repo
 ever grows into multiple packages that need coordinated releases.
 
+## Why commitlint instead of a hand-rolled script
+
+The `commit-msg` hook used to run a hand-rolled shell script (`grep -qE` against a fixed pattern) —
+every wrinkle (merge/revert commits, the optional `[JIRA-1]` tag, breaking-change `!`) was a
+manually maintained regex edge case. `commitlint` and `@commitlint/config-conventional` already
+encode that grammar as a maintained package; `@arnaud-zg/configs/commitlint` just extends it and
+adds one rule, a mandatory scope. Bonus: unlike the old script, `pnpm exec commitlint --edit {1}`
+doesn't hardcode a `node_modules/@arnaud-zg/configs/...` path, so the `lefthook-local.yml` override
+this repo needed just to work around that path is gone too.
+
 ## Why `main` is protected via Lefthook
 
 This is an opinionated choice, not a default: direct commits to `main` are not acceptable, every

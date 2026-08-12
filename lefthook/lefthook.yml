@@ -17,7 +17,7 @@ pre-commit:
 commit-msg:
   commands:
     check-format:
-      run: sh node_modules/@arnaud-zg/configs/lefthook/check-commit-msg.sh {1}
+      run: pnpm exec commitlint --edit {1}
       skip: [rebase]
 
 post-checkout:

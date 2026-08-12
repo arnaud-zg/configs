@@ -5,7 +5,6 @@ import path from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
 const root = path.resolve(import.meta.dirname, "..");
-const scriptPath = path.join(root, "lefthook/check-commit-msg.sh");
 
 describe("lefthook.yml extends chain", () => {
   test("dump merges the root config with the shared base", () => {
@@ -20,22 +19,20 @@ describe("lefthook.yml extends chain", () => {
     expect(output).toContain("protect-main");
   });
 
-  // lefthook.yml's `extends` always wins over lefthook.yml's own settings (merge order is
-  // lefthook.yml -> extends -> remotes -> lefthook-local.yml), so this repo overrides the shared
-  // config's consumer-facing commit-msg path (node_modules/@arnaud-zg/configs/...) via
-  // lefthook-local.yml, the only file with higher precedence than `extends`. A real `git commit`
-  // in this repo would be broken without it.
-  test("lefthook-local.yml overrides the shared config's commit-msg path", () => {
+  test("commit-msg hook delegates to commitlint", () => {
     const output = execFileSync(path.join(root, "node_modules/.bin/lefthook"), ["dump"], {
       cwd: root,
       encoding: "utf8",
     });
-    expect(output).toContain("run: sh lefthook/check-commit-msg.sh {1}");
-    expect(output).not.toContain("node_modules/@arnaud-zg/configs/lefthook/check-commit-msg.sh");
+    expect(output).toContain("pnpm exec commitlint --edit {1}");
   });
 });
 
-describe("check-commit-msg.sh", () => {
+// commitlint.config.mjs at the repo root extends ./commitlint/index.mjs, so this exercises the
+// exact same rules a consumer gets from @arnaud-zg/configs/commitlint, auto-discovered the same
+// way lefthook's commit-msg hook (`pnpm exec commitlint --edit {1}`) discovers it — no explicit
+// --config.
+describe("commitlint (repo root config)", () => {
   let tmpDir: string | undefined;
 
   afterEach(() => {
@@ -44,11 +41,14 @@ describe("check-commit-msg.sh", () => {
   });
 
   function checkSubject(subject: string): number {
-    tmpDir = mkdtempSync(path.join(os.tmpdir(), "commit-msg-"));
+    tmpDir = mkdtempSync(path.join(os.tmpdir(), "commitlint-test-"));
     const msgFile = path.join(tmpDir, "msg.txt");
     writeFileSync(msgFile, `${subject}\n`);
     try {
-      execFileSync("sh", [scriptPath, msgFile], { stdio: "pipe" });
+      execFileSync(path.join(root, "node_modules/.bin/commitlint"), ["--edit", msgFile], {
+        cwd: root,
+        stdio: "pipe",
+      });
       return 0;
     } catch (error) {
       return (error as { status: number }).status;

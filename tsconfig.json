@@ -7,6 +7,7 @@
     "*.ts",
     "*.mjs",
     ".remarkrc.mjs",
+    "commitlint/index.mjs",
     "eslint/base.mjs",
     "eslint/react.mjs",
     "prettier/index.js",

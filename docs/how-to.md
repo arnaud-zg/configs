@@ -57,7 +57,7 @@ multi-subpath `exports` map, add `exports: false` so the build doesn't overwrite
 ## Add Git hooks with Lefthook
 
 ```sh
-pnpm add -D lefthook prettier
+pnpm add -D lefthook prettier @commitlint/cli @commitlint/config-conventional
 ```
 
 ```yaml
@@ -66,9 +66,37 @@ extends:
   - node_modules/@arnaud-zg/configs/lefthook/lefthook.yml
 ```
 
+```js
+// commitlint.config.mjs
+import base from "@arnaud-zg/configs/commitlint";
+
+export default base;
+```
+
 Add `"prepare": "lefthook install"` to `package.json` so hooks install on `pnpm install`. Declare
-only what you're adding on top of the shared base (protect-`main`, Prettier formatting, Conventional
-Commits); `extends` merges the rest in.
+only what you're adding on top of the shared base (protect-`main`, Prettier formatting); `extends`
+merges the rest in. The shared `commit-msg` hook shells out to `pnpm exec commitlint --edit`, which
+is why it needs its own config — see [Enforce Conventional Commits](#enforce-conventional-commits).
+
+## Enforce Conventional Commits
+
+`@arnaud-zg/configs/commitlint` extends `@commitlint/config-conventional` and additionally requires
+a scope (`type(scope): subject`, e.g. `feat(eslint): add a new rule`), matching what the shared
+Lefthook `commit-msg` hook expects.
+
+```sh
+pnpm add -D @commitlint/cli @commitlint/config-conventional
+```
+
+```js
+// commitlint.config.mjs
+import base from "@arnaud-zg/configs/commitlint";
+
+export default base;
+```
+
+To use plain `@commitlint/config-conventional` instead (scope optional), extend that directly rather
+than this package's preset.
 
 ## Lint Markdown
 

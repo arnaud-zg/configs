@@ -1,7 +1,8 @@
 # @arnaud-zg/configs
 
-Shareable dev-tooling configs (ESLint, Prettier, tsconfig, tsdown, Lefthook, and remark) bundled as
-a single package with subpath exports. Install what you need; every peer dependency is optional.
+Shareable dev-tooling configs (ESLint, Prettier, tsconfig, tsdown, Lefthook, remark, and commitlint)
+bundled as a single package with subpath exports. Install what you need; every peer dependency is
+optional.
 
 ```sh
 pnpm add -D @arnaud-zg/configs
@@ -21,14 +22,15 @@ pnpm add -D @arnaud-zg/configs
 
 ## 🧰 What's inside
 
-| Subpath                              | What it is                                |
-| ------------------------------------ | ----------------------------------------- |
-| `@arnaud-zg/configs/eslint`          | ESLint 9 flat config (+ `/react` variant) |
-| `@arnaud-zg/configs/prettier`        | Prettier config with import sorting       |
-| `@arnaud-zg/configs/tsconfig/*.json` | 11 tsconfig variants to extend            |
-| `@arnaud-zg/configs/tsdown`          | Shared tsdown build defaults              |
-| `@arnaud-zg/configs/lefthook/*`      | Shared Lefthook base + commit-msg check   |
-| `@arnaud-zg/configs/remark`          | remark-lint recommended preset            |
+| Subpath                              | What it is                                       |
+| ------------------------------------ | ------------------------------------------------ |
+| `@arnaud-zg/configs/eslint`          | ESLint 9 flat config (+ `/react` variant)        |
+| `@arnaud-zg/configs/prettier`        | Prettier config with import sorting              |
+| `@arnaud-zg/configs/tsconfig/*.json` | 11 tsconfig variants to extend                   |
+| `@arnaud-zg/configs/tsdown`          | Shared tsdown build defaults                     |
+| `@arnaud-zg/configs/lefthook/*`      | Shared Lefthook base (commit-msg via commitlint) |
+| `@arnaud-zg/configs/remark`          | remark-lint recommended preset                   |
+| `@arnaud-zg/configs/commitlint`      | Conventional Commits, mandatory scope            |
 
 ## License
 
