@@ -12,20 +12,35 @@ if (!reactRecommended) {
   throw new Error("eslint-plugin-react: configs.flat.recommended not found");
 }
 
+const reactJsxRuntime = react.configs.flat["jsx-runtime"];
+if (!reactJsxRuntime) {
+  throw new Error("eslint-plugin-react: configs.flat['jsx-runtime'] not found");
+}
+
 /**
  * `base` plus React, React Hooks, and JSX accessibility rules for `.ts`/`.tsx` files.
+ *
+ * Includes eslint-plugin-react's `jsx-runtime` config since this package targets the
+ * automatic JSX runtime, where `react/react-in-jsx-scope` and `react/jsx-uses-react`
+ * would otherwise false-positive on every file.
  */
-export default tseslint.config(...base, reactRecommended, jsxA11y.flatConfigs.recommended, {
-  files: ["**/*.{ts,tsx}"],
-  plugins: {
-    "react-hooks": reactHooks,
+export default tseslint.config(
+  ...base,
+  reactRecommended,
+  reactJsxRuntime,
+  jsxA11y.flatConfigs.recommended,
+  {
+    files: ["**/*.{ts,tsx}"],
+    plugins: {
+      "react-hooks": reactHooks,
+    },
+    settings: {
+      react: { version: "detect" },
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      // TypeScript already enforces prop types via the type system.
+      "react/prop-types": "off",
+    },
   },
-  settings: {
-    react: { version: "detect" },
-  },
-  rules: {
-    ...reactHooks.configs.recommended.rules,
-    // TypeScript already enforces prop types via the type system.
-    "react/prop-types": "off",
-  },
-});
+);
