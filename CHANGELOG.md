@@ -18,3 +18,5 @@ for that version.
 - Shared `tsconfig.json` bases: Node, React, React Native, and their Vite/Vitest/Storybook
   combinations.
 - Shared [tsdown](https://tsdown.dev) build defaults for libraries.
+- Shared [Lefthook](https://lefthook.dev) base: protect `main`, format staged files, enforce
+  Conventional Commits.

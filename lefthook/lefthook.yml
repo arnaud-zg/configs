@@ -1,0 +1,54 @@
+pre-commit:
+  parallel: true
+  commands:
+    protect-main:
+      run: |
+        branch=$(git symbolic-ref --short HEAD)
+        if [ "$branch" = "main" ]; then
+          echo "Direct commits to main are not allowed. Create a branch first."
+          exit 1
+        fi
+    format:
+      glob: "*.{js,jsx,ts,tsx,json,md,mdx,css,html,yml,yaml}"
+      run: pnpm exec prettier --write --cache --cache-location .cache/.prettiercache {staged_files}
+      stage_fixed: true
+      skip: [merge, rebase]
+
+commit-msg:
+  commands:
+    check-format:
+      run: sh node_modules/@arnaud-zg/configs/lefthook/check-commit-msg.sh {1}
+      skip: [rebase]
+
+post-checkout:
+  piped: true
+  commands:
+    git-pull:
+      run: |
+        if [ "{3}" != "1" ]; then exit 0; fi
+        has_upstream() { git rev-parse --abbrev-ref --symbolic-full-name @{u} > /dev/null 2>&1; }
+        remote_exists() { git ls-remote --exit-code --heads origin "$1" > /dev/null 2>&1; }
+        branch=$(git symbolic-ref --short HEAD)
+        if ! has_upstream && remote_exists "$branch"; then
+          git branch --set-upstream-to="origin/$branch" "$branch" > /dev/null 2>&1
+        fi
+        if has_upstream; then
+          upstream_branch=$(git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null | sed 's|^origin/||')
+          remote_exists "$upstream_branch" && git pull
+        fi
+    install-deps:
+      run: |
+        if [ "{3}" != "1" ]; then exit 0; fi
+        if git diff "{1}" "{2}" --name-only | grep -q 'pnpm-lock.yaml'; then
+          echo "pnpm-lock.yaml changed — running pnpm install"
+          pnpm install
+        fi
+
+post-merge:
+  commands:
+    install-deps:
+      run: |
+        if git diff HEAD@{1} --name-only | grep -q 'pnpm-lock.yaml'; then
+          echo "pnpm-lock.yaml changed — running pnpm install"
+          pnpm install
+        fi
