@@ -125,6 +125,23 @@ issues Prettier can't resolve on its own (see `CHANGELOG.md`'s `<!--lint disable
 Formatting `.md` files is Prettier's job, already covered if you set up
 `@arnaud-zg/configs/prettier` (see [Tutorial](./tutorial.md#4-add-prettier)).
 
+## Lint docs with frontmatter or task lists
+
+Use `/remark/docs` instead of the base config if your Markdown has YAML frontmatter (docs sites,
+ADRs, blog posts) or GFM task-list checkboxes (`- [ ]`): it adds support for both, so they don't get
+misflagged for bad indentation or undefined link references.
+
+```sh
+pnpm add -D remark-frontmatter remark-gfm
+```
+
+```js
+// .remarkrc.mjs
+import base from "@arnaud-zg/configs/remark/docs";
+
+export default base;
+```
+
 ## Run this repo's own tests
 
 For people working on `@arnaud-zg/configs` itself:

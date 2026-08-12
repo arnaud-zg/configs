@@ -16,6 +16,7 @@ Every peer is optional; install only what your chosen subpath needs.
 | `@arnaud-zg/configs/tsdown`                | `dist/base.js` (built from `tsdown/base.ts`) | `tsdown`, `typescript`                                                                   |
 | `@arnaud-zg/configs/lefthook/lefthook.yml` | `lefthook/lefthook.yml`                      | `lefthook`, `prettier`, `@commitlint/cli`                                                |
 | `@arnaud-zg/configs/remark`                | `remark/index.mjs`                           | `remark-cli`, `remark-preset-lint-recommended`                                           |
+| `@arnaud-zg/configs/remark/docs`           | `remark/docs.mjs`                            | above, plus `remark-frontmatter`, `remark-gfm`                                           |
 | `@arnaud-zg/configs/commitlint`            | `commitlint/index.mjs`                       | `@commitlint/cli`, `@commitlint/config-conventional`                                     |
 
 ## tsconfig variants
@@ -63,7 +64,7 @@ prettier/     index.js
 tsconfig/     base.json + 10 variants
 tsdown/       base.ts (source; not what consumers import, see below)
 lefthook/     lefthook.yml
-remark/       index.mjs
+remark/       index.mjs, docs.mjs
 commitlint/   index.mjs
 dist/         base.js, base.d.ts — built from tsdown/base.ts at publish time, gitignored otherwise
 __tests__/    this repo's own tests (not published)
