@@ -14,6 +14,7 @@ const requiredPeersBySubpath: Record<string, string[]> = {
   "./prettier": ["prettier", "@ianvs/prettier-plugin-sort-imports"],
   "./tsdown": ["tsdown"],
   "./lefthook/lefthook.yml": ["lefthook"],
+  "./remark": ["remark-cli", "remark-preset-lint-recommended"],
 };
 
 describe("a developer importing a subpath", () => {

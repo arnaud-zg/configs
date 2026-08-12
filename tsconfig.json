@@ -6,9 +6,11 @@
   "include": [
     "*.ts",
     "*.mjs",
+    ".remarkrc.mjs",
     "eslint/base.mjs",
     "eslint/react.mjs",
     "prettier/index.js",
+    "remark/index.mjs",
     "tsdown/base.ts"
   ]
 }

@@ -70,13 +70,34 @@ Add `"prepare": "lefthook install"` to `package.json` so hooks install on `pnpm 
 only what you're adding on top of the shared base (protect-`main`, Prettier formatting, Conventional
 Commits); `extends` merges the rest in.
 
+## Lint Markdown
+
+```sh
+pnpm add -D remark-cli remark-preset-lint-recommended
+```
+
+```js
+// .remarkrc.mjs
+import base from "@arnaud-zg/configs/remark";
+
+export default base;
+```
+
+```sh
+remark . --frail --quiet
+```
+
+`--frail` makes warnings fail the run (not just errors); `--quiet` silences per-file "no issues
+found" info messages. A `.remarkignore` (`node_modules`, build output, etc.) keeps generated files
+out of the run.
+
 ## Run this repo's own tests
 
 For people working on `@arnaud-zg/configs` itself:
 
 ```sh
 pnpm install
-pnpm typecheck && pnpm lint && pnpm format:check && pnpm test
+pnpm typecheck && pnpm lint && pnpm lint:md && pnpm format:check && pnpm test
 ```
 
 ## Release a new version
