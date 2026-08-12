@@ -13,6 +13,15 @@ parser; remark-lint's no-undefined-references rule would otherwise flag every ve
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-08-12
+
+### Added
+
+- `@arnaud-zg/configs/remark/docs`: variant of the remark config for Markdown with YAML frontmatter
+  (guides, ADRs, blog posts) or GFM task-list checkboxes (`- [ ]`), so they don't get misflagged as
+  misindented lists or undefined link references. See
+  [how-to.md](./docs/how-to.md#lint-docs-with-frontmatter-or-task-lists).
+
 ## [0.2.0] - 2026-08-12
 
 ### Added
