@@ -15,15 +15,31 @@ at this size. The `exports` map lets each subpath resolve independently from one
 `peerDependenciesMeta.<name>.optional: true` on every peer means installing this package alone pulls
 in nothing else. A consumer using only `/prettier` never gets nudged about `eslint` or `tsdown`.
 
-## Why no build step and no barrel file
+## Why no build step and no barrel file (mostly)
 
-The package ships its source files as-is. Nothing needs transpiling, and a barrel `index.ts` would
-force every consumer to pull in every subpath's dependencies just to import one: importing it just
-for `/prettier` would still try to load `/eslint`'s module and crash on a missing `@eslint/js` peer
-that consumer never installed. Tree-shaking usually handles barrel files fine, but "usually" isn't
-good enough here: when a bundler doesn't fully eliminate the unused re-exports, a consumer ends up
-with every subpath's code (and its peer requirements) pulled in regardless. Not worth the risk for a
-package whose whole point is "install only what you use."
+Most subpaths ship their source files as-is. Nothing needs transpiling, and a barrel `index.ts`
+would force every consumer to pull in every subpath's dependencies just to import one: importing it
+just for `/prettier` would still try to load `/eslint`'s module and crash on a missing `@eslint/js`
+peer that consumer never installed. Tree-shaking usually handles barrel files fine, but "usually"
+isn't good enough here: when a bundler doesn't fully eliminate the unused re-exports, a consumer
+ends up with every subpath's code (and its peer requirements) pulled in regardless. Not worth the
+risk for a package whose whole point is "install only what you use." `./tsdown` is the one exception
+— see below.
+
+## Why `./tsdown` is the one export that's built
+
+Every other subpath ships as-is (see above), but `./tsdown` resolves to built `dist/` output instead
+of the checked-in `tsdown/base.ts` source. The difference: every other subpath is either inert data
+(`.json`, `.yml`) or JS that a consumer's own bundler/runtime loads, so shipping raw source is fine.
+`./tsdown` is different — it gets executed directly by tsdown's own config loader, `unrun`, when a
+consumer's `tsdown.config.ts` does
+`import { defineLibraryConfig } from "@arnaud-zg/configs/tsdown"`. `unrun` relies on Node's
+`--experimental-strip-types`, which deliberately refuses to strip types for any file resolved under
+`node_modules` (a safety/perf heuristic against transforming third-party code, not a bug). So raw
+`tsdown/base.ts` published as the `./tsdown` export target fails to load for every real consumer,
+even though it works fine when this repo builds it via a same-directory relative import — which is
+exactly why the original test suite didn't catch it, and why the regression test for this imports
+the packed tarball through its real `node_modules` resolution rather than a relative path.
 
 ## Why `tsdown.config.ts` in this repo passes `exports: false`
 

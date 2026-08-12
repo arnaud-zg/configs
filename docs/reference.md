@@ -7,15 +7,15 @@
 
 Every peer is optional; install only what your chosen subpath needs.
 
-| Subpath                                           | Resolves to                        | Required peers                                                                           |
-| ------------------------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------- |
-| `@arnaud-zg/configs/eslint`                       | `eslint/base.mjs`                  | `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-config-prettier`                    |
-| `@arnaud-zg/configs/eslint/react`                 | `eslint/react.mjs`                 | above, plus `eslint-plugin-react`, `eslint-plugin-jsx-a11y`, `eslint-plugin-react-hooks` |
-| `@arnaud-zg/configs/prettier`                     | `prettier/index.js`                | `prettier`, `@ianvs/prettier-plugin-sort-imports`, `prettier-plugin-packagejson`         |
-| `@arnaud-zg/configs/tsconfig/*.json`              | `tsconfig/*.json` (variants below) | `typescript`                                                                             |
-| `@arnaud-zg/configs/tsdown`                       | `tsdown/base.ts`                   | `tsdown`, `typescript`                                                                   |
-| `@arnaud-zg/configs/lefthook/lefthook.yml`        | `lefthook/lefthook.yml`            | `lefthook`, `prettier`                                                                   |
-| `@arnaud-zg/configs/lefthook/check-commit-msg.sh` | `lefthook/check-commit-msg.sh`     | none                                                                                     |
+| Subpath                                           | Resolves to                                  | Required peers                                                                           |
+| ------------------------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `@arnaud-zg/configs/eslint`                       | `eslint/base.mjs`                            | `eslint`, `@eslint/js`, `typescript-eslint`, `eslint-config-prettier`                    |
+| `@arnaud-zg/configs/eslint/react`                 | `eslint/react.mjs`                           | above, plus `eslint-plugin-react`, `eslint-plugin-jsx-a11y`, `eslint-plugin-react-hooks` |
+| `@arnaud-zg/configs/prettier`                     | `prettier/index.js`                          | `prettier`, `@ianvs/prettier-plugin-sort-imports`, `prettier-plugin-packagejson`         |
+| `@arnaud-zg/configs/tsconfig/*.json`              | `tsconfig/*.json` (variants below)           | `typescript`                                                                             |
+| `@arnaud-zg/configs/tsdown`                       | `dist/base.js` (built from `tsdown/base.ts`) | `tsdown`, `typescript`                                                                   |
+| `@arnaud-zg/configs/lefthook/lefthook.yml`        | `lefthook/lefthook.yml`                      | `lefthook`, `prettier`                                                                   |
+| `@arnaud-zg/configs/lefthook/check-commit-msg.sh` | `lefthook/check-commit-msg.sh`               | none                                                                                     |
 
 ## tsconfig variants
 
@@ -43,14 +43,15 @@ Always declare your own `include`/`exclude` in the extending project: several va
 
 Not shipped to consumers: `devDependencies` never propagate.
 
-| Script             | Runs                                                         |
-| ------------------ | ------------------------------------------------------------ |
-| `pnpm lint`        | `eslint .`                                                   |
-| `pnpm format`      | `prettier --write .`                                         |
-| `pnpm typecheck`   | `tsc --noEmit`, then again against `__tests__/`              |
-| `pnpm test`        | `vitest run`                                                 |
-| `pnpm build:check` | Smoke-builds `tsdown/base.ts` with itself                    |
-| `pnpm prepare`     | `lefthook install` (runs automatically after `pnpm install`) |
+| Script           | Runs                                                                                  |
+| ---------------- | ------------------------------------------------------------------------------------- |
+| `pnpm lint`      | `eslint .`                                                                            |
+| `pnpm format`    | `prettier --write .`                                                                  |
+| `pnpm typecheck` | `tsc --noEmit`, then again against `__tests__/`                                       |
+| `pnpm test`      | `vitest run`                                                                          |
+| `pnpm build`     | Builds `tsdown/base.ts` into `dist/` — this is what the `./tsdown` export resolves to |
+| `pnpm prepack`   | `pnpm build` (runs automatically before `pnpm pack` / `pnpm publish`)                 |
+| `pnpm prepare`   | `lefthook install` (runs automatically after `pnpm install`)                          |
 
 ## Package layout
 
@@ -58,9 +59,12 @@ Not shipped to consumers: `devDependencies` never propagate.
 eslint/       base.mjs, react.mjs
 prettier/     index.js
 tsconfig/     base.json + 10 variants
-tsdown/       base.ts
+tsdown/       base.ts (source; not what consumers import, see below)
 lefthook/     lefthook.yml, check-commit-msg.sh
+dist/         base.js, base.d.ts — built from tsdown/base.ts at publish time, gitignored otherwise
 __tests__/    this repo's own tests (not published)
 ```
 
-`package.json`'s `files` ships only the five directories above plus `LICENSE`.
+`package.json`'s `files` ships the six directories above plus `LICENSE`. `dist/` doesn't exist in
+the repo itself — it's produced by the `prepack` script right before packing/publishing (see
+[Explanation](./explanation.md#why-tsdown-is-the-one-export-thats-built)).
