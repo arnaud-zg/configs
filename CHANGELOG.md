@@ -9,6 +9,15 @@ for that version.
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-08-12
+
+### Fixed
+
+- `eslint/react.mjs` now includes eslint-plugin-react's `jsx-runtime` config alongside
+  `recommended`. Without it, `react/react-in-jsx-scope` and `react/jsx-uses-react` false-positive on
+  every JSX file in projects using the automatic runtime (React 17+), which is the default for
+  virtually all current React/React Native/Expo projects.
+
 ## [0.1.1] - 2026-08-12
 
 ### Fixed

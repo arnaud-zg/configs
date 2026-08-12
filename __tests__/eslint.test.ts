@@ -126,6 +126,10 @@ describe("eslint/react", () => {
       expect(ruleIds).toContain("jsx-a11y/alt-text");
       expect(ruleIds).toContain("jsx-a11y/click-events-have-key-events");
       expect(ruleIds).toContain("react/jsx-no-target-blank");
+      // This fixture doesn't import React, relying on the automatic JSX runtime configured
+      // by tsconfig/react.json's `"jsx": "react-jsx"`. react/react-in-jsx-scope assumes the
+      // classic runtime and would false-positive here if the jsx-runtime config were missing.
+      expect(ruleIds).not.toContain("react/react-in-jsx-scope");
     });
   });
 });
