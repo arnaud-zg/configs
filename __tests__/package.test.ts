@@ -15,6 +15,12 @@ const requiredPeersBySubpath: Record<string, string[]> = {
   "./tsdown": ["tsdown", "typescript"],
   "./lefthook/lefthook.yml": ["lefthook", "prettier", "@commitlint/cli"],
   "./remark": ["remark-cli", "remark-preset-lint-recommended"],
+  "./remark/docs": [
+    "remark-cli",
+    "remark-preset-lint-recommended",
+    "remark-frontmatter",
+    "remark-gfm",
+  ],
   "./commitlint": ["@commitlint/cli", "@commitlint/config-conventional"],
 };
 
