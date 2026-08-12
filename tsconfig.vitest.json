@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig/node-vitest.json",
+  "compilerOptions": {
+    "strictNullChecks": true
+  },
+  "include": ["__tests__/**/*.ts"],
+  "exclude": ["node_modules"]
+}
