@@ -5,12 +5,19 @@ import tseslint from "typescript-eslint";
 
 import base from "./base.mjs";
 
+// eslint-plugin-react types `configs.flat` as a plain Record, so indexing it is `T | undefined`
+// under noUncheckedIndexedAccess even though "recommended" always exists at runtime.
+const reactRecommended = react.configs.flat.recommended;
+if (!reactRecommended) {
+  throw new Error("eslint-plugin-react: configs.flat.recommended not found");
+}
+
 /**
  * `base` plus React, React Hooks, and JSX accessibility rules for `.ts`/`.tsx` files.
  */
 export default tseslint.config(
   ...base,
-  react.configs.flat.recommended,
+  reactRecommended,
   jsxA11y.flatConfigs.recommended,
   {
     files: ["**/*.{ts,tsx}"],
