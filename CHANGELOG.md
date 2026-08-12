@@ -7,7 +7,16 @@ All notable changes to this project are documented here. Format follows
 Before running `pnpm version`, move the entries below out of `[Unreleased]` into a new dated section
 for that version.
 
+<!-- Keep a Changelog's `## [x.y.z]` headings read as CommonMark reference-link syntax to a strict
+parser; remark-lint's no-undefined-references rule would otherwise flag every version heading below. -->
+<!--lint disable no-undefined-references-->
+
 ## [Unreleased]
+
+### Added
+
+- `@arnaud-zg/configs/remark`: remark-lint's recommended preset, for a `.remarkrc.mjs` that lints
+  Markdown. Dogfooded in this repo (`pnpm lint:md`).
 
 ## [0.1.3] - 2026-08-12
 

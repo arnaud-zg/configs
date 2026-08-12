@@ -13,4 +13,5 @@ directly on `main`.
 
 ## Before committing
 
-Run `pnpm typecheck && pnpm lint && pnpm format:check && pnpm test`. All four must pass.
+Run `pnpm typecheck && pnpm lint && pnpm lint:md && pnpm format:check && pnpm test`. All five must
+pass.

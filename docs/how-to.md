@@ -70,13 +70,40 @@ Add `"prepare": "lefthook install"` to `package.json` so hooks install on `pnpm 
 only what you're adding on top of the shared base (protect-`main`, Prettier formatting, Conventional
 Commits); `extends` merges the rest in.
 
+## Lint Markdown
+
+```sh
+pnpm add -D remark-cli remark-preset-lint-recommended
+```
+
+```js
+// .remarkrc.mjs
+import base from "@arnaud-zg/configs/remark";
+
+export default base;
+```
+
+```sh
+remark . --frail --quiet
+```
+
+`--frail` makes warnings fail the run (not just errors); `--quiet` silences per-file "no issues
+found" info messages. A `.remarkignore` (`node_modules`, build output, etc.) keeps generated files
+out of the run.
+
+This lints Markdown content only, no `--output`/fix mode. Some findings (missing final newline,
+spacing) get fixed just by running Prettier; others, like undefined link references, are content
+issues Prettier can't resolve on its own (see `CHANGELOG.md`'s `<!--lint disable-->` comment).
+Formatting `.md` files is Prettier's job, already covered if you set up
+`@arnaud-zg/configs/prettier` (see [Tutorial](./tutorial.md#4-add-prettier)).
+
 ## Run this repo's own tests
 
 For people working on `@arnaud-zg/configs` itself:
 
 ```sh
 pnpm install
-pnpm typecheck && pnpm lint && pnpm format:check && pnpm test
+pnpm typecheck && pnpm lint && pnpm lint:md && pnpm format:check && pnpm test
 ```
 
 ## Release a new version

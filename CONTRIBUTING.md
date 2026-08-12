@@ -32,10 +32,10 @@ Enforced by the `commit-msg` hook.
 ## Before opening a PR
 
 ```sh
-pnpm typecheck && pnpm lint && pnpm format:check && pnpm test
+pnpm typecheck && pnpm lint && pnpm lint:md && pnpm format:check && pnpm test
 ```
 
-All four must pass. See [Reference](./docs/reference.md#scripts-for-contributors-to-this-repo) for
+All five must pass. See [Reference](./docs/reference.md#scripts-for-contributors-to-this-repo) for
 what each one does.
 
 ## Releasing
