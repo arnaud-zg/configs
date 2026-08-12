@@ -98,8 +98,16 @@ committing. After the PR merges:
 
 ```sh
 git checkout main && git pull
-git tag "v$(node -p "require('./package.json').version")"
+VERSION=$(node -p "require('./package.json').version")
+NOTES=$(awk -v ver="$VERSION" 'BEGIN{gsub(/\./,"\\.",ver)} $0~"^## \\["ver"\\]"{f=1;next} /^## \[/{f=0} f' CHANGELOG.md)
+[ -n "$NOTES" ] || { echo "No CHANGELOG.md entry found for v$VERSION. Was [Unreleased] moved into a dated section?" >&2; exit 1; }
+git tag -a "v$VERSION" -m "v$VERSION" -m "$NOTES"
 git push --tags
+gh release create "v$VERSION" --title "v$VERSION" --notes "$NOTES"
 pnpm publish --dry-run   # sanity-check first
 pnpm publish
 ```
+
+The `NOTES` extraction pulls the matching `## [$VERSION]` section out of `CHANGELOG.md`, so the tag
+(annotated, not lightweight) and the GitHub Release both carry that version's changelog entry
+instead of being empty.
