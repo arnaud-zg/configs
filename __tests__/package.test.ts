@@ -10,10 +10,10 @@ const root = path.resolve(import.meta.dirname, "..");
 // docs would install: only the peers for the subpath they picked, nothing else.
 const requiredPeersBySubpath: Record<string, string[]> = {
   "./eslint": ["eslint", "@eslint/js", "typescript-eslint", "eslint-config-prettier"],
-  "./eslint/react": ["eslint-plugin-react-hooks"],
-  "./prettier": ["prettier", "@ianvs/prettier-plugin-sort-imports"],
-  "./tsdown": ["tsdown"],
-  "./lefthook/lefthook.yml": ["lefthook", "@commitlint/cli"],
+  "./eslint/react": ["eslint-plugin-react", "eslint-plugin-jsx-a11y", "eslint-plugin-react-hooks"],
+  "./prettier": ["prettier", "@ianvs/prettier-plugin-sort-imports", "prettier-plugin-packagejson"],
+  "./tsdown": ["tsdown", "typescript"],
+  "./lefthook/lefthook.yml": ["lefthook", "prettier", "@commitlint/cli"],
   "./remark": ["remark-cli", "remark-preset-lint-recommended"],
   "./commitlint": ["@commitlint/cli", "@commitlint/config-conventional"],
 };
