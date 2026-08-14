@@ -24,20 +24,20 @@ peer that consumer never installed. Tree-shaking usually handles barrel files fi
 isn't good enough here: when a bundler doesn't fully eliminate the unused re-exports, a consumer
 ends up with every subpath's code (and its peer requirements) pulled in regardless. Not worth the
 risk for a package whose whole point is "install only what you use." `./tsdown` is the one exception
-— see below.
+(see below).
 
 ## Why `./tsdown` is the one export that's built
 
 Every other subpath ships as-is (see above), but `./tsdown` resolves to built `dist/` output instead
 of the checked-in `tsdown/base.ts` source. The difference: every other subpath is either inert data
 (`.json`, `.yml`) or JS that a consumer's own bundler/runtime loads, so shipping raw source is fine.
-`./tsdown` is different — it gets executed directly by tsdown's own config loader, `unrun`, when a
+`./tsdown` is different: it gets executed directly by tsdown's own config loader, `unrun`, when a
 consumer's `tsdown.config.ts` does
 `import { defineLibraryConfig } from "@arnaud-zg/configs/tsdown"`. `unrun` relies on Node's
 `--experimental-strip-types`, which deliberately refuses to strip types for any file resolved under
 `node_modules` (a safety/perf heuristic against transforming third-party code, not a bug). So raw
 `tsdown/base.ts` published as the `./tsdown` export target fails to load for every real consumer,
-even though it works fine when this repo builds it via a same-directory relative import — which is
+even though it works fine when this repo builds it via a same-directory relative import, which is
 exactly why the original test suite didn't catch it, and why the regression test for this imports
 the packed tarball through its real `node_modules` resolution rather than a relative path.
 
@@ -84,3 +84,57 @@ bypassing impossible, it's to make bypassing something you have to choose to do,
 happens by accident. Real enforcement (blocking a bypassed push, not just a local commit) needs
 GitHub branch protection on `main` configured server-side; the Lefthook hook alone can't provide
 that.
+
+## The peer-check engine
+
+`internal/` checks that a subpath's declared peers are actually installed, at the right version, the
+moment that subpath is imported. It's modeled as pure values plus one boundary, not one big
+function, so most of it is unit-testable with no fixture at all.
+
+```mermaid
+flowchart BT
+    subgraph values["Value Objects (pure, no I/O)"]
+        CR["caret-range.mjs"]
+        PKR["PackageRange"]
+        IP["InstalledPackage"]
+        PQ["PeerRequirement"]
+        PKR --> CR
+        PQ --> PKR
+    end
+
+    subgraph boundary["The only real-world reads"]
+        RIP["resolveInstalledPackage"]
+        TOGGLE["peer-check-toggle.mjs"]
+        RIP --> IP
+    end
+
+    subgraph orchestration["Orchestration"]
+        PRL["PeerRequirementList"]
+        ERR["MissingPeerDependenciesError"]
+        REG["SubpathPeerRegistry"]
+        PRL --> PQ
+        PRL --> RIP
+        PRL --> TOGGLE
+        PRL --> ERR
+        REG --> PQ
+        REG --> PRL
+    end
+
+    ENTRY["a subpath entry file"] --> REG
+```
+
+- **`PackageRange`, `InstalledPackage`, `PeerRequirement`** are Value Objects: immutable, defined
+  entirely by their data, safe to construct by hand in a test. `PeerRequirement#checkAgainst` takes
+  an `InstalledPackage` as an argument; it never resolves one itself.
+- **`resolve-installed-package.mjs`** is the one place this domain touches disk. Everything above it
+  in the diagram is provably pure.
+- **`peer-check-toggle.mjs`** is the other real-world read: the `ARNAUD_ZG_CONFIGS_SKIP_PEER_CHECK`
+  escape hatch, checked once per subpath, in one place.
+- **`PeerRequirementList`** is where the two meet: it asks the resolver for real facts, asks each
+  requirement to check itself, and throws `MissingPeerDependenciesError` if anything failed.
+- **`SubpathPeerRegistry`** is what every subpath entry file actually calls: it owns the
+  subpath-to-peer-names table and builds the `PeerRequirement`s a `PeerRequirementList` needs.
+
+No Entity lives here, on purpose: nothing in this domain has identity that survives a state change.
+Every piece is either a stateless fact, resolved fresh each time, or a stateless comparison against
+it.
