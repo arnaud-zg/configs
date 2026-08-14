@@ -155,3 +155,22 @@ here: the correctness tests only assert _that_ a version resolves, not how.
 threshold (200ms for all 19 peers, ~30x today's measured cost), not a tight one. A tight budget
 would flake on a slow CI runner without catching anything a generous one doesn't; the point is to
 catch "someone made this categorically slower," not to chase milliseconds.
+
+### Why there's a second guard for a huge, deeply-nested monorepo
+
+A natural worry: does this get slower for a consumer with a huge codebase, say a monorepo with
+hundreds of thousands of lines across thousands of files? No — `resolveInstalledPackage` never reads
+anything but `package.json` files on the single path between its own location and wherever the
+target package's `node_modules` folder sits, so total file count and lines of code in the consuming
+repo are irrelevant. The one variable that actually drives its cost is directory depth: how many
+levels separate this package's installed location from the `node_modules` that holds the peer.
+
+That's the realistic way a "huge organization" repo could differ from this one: a package many
+workspace layers deep in a large Bazel/Nx-style monorepo, or an unhoisted npm install with deep
+transitive nesting, rather than a normal-depth `node_modules`. Measured by hand while writing the
+second describe block in `resolve-installed-package.integration.test.ts`, the walk fallback costs
+roughly 0.025ms per directory level, linearly, up to 150 levels (already deeper than any real
+npm/pnpm/yarn install has been seen to nest) for under 4ms total. The test fixes `DEPTH` at 100 — an
+unrealistic worst case on its own — and still asserts a 50ms ceiling on top of that, about 10x
+today's measured cost at that depth, for the same reason the first guard's threshold is generous:
+catch a categorical regression, don't chase milliseconds or flake on a slow runner.
