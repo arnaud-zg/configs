@@ -40,7 +40,7 @@ post-checkout:
       run: |
         if [ "{3}" != "1" ]; then exit 0; fi
         if git diff "{1}" "{2}" --name-only | grep -q 'pnpm-lock.yaml'; then
-          echo "pnpm-lock.yaml changed — running pnpm install"
+          echo "pnpm-lock.yaml changed: running pnpm install"
           pnpm install
         fi
 
@@ -49,6 +49,6 @@ post-merge:
     install-deps:
       run: |
         if git diff HEAD@{1} --name-only | grep -q 'pnpm-lock.yaml'; then
-          echo "pnpm-lock.yaml changed — running pnpm install"
+          echo "pnpm-lock.yaml changed: running pnpm install"
           pnpm install
         fi
