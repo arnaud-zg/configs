@@ -13,6 +13,18 @@ parser; remark-lint's no-undefined-references rule would otherwise flag every ve
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-08-14
+
+### Added
+
+- Every subpath now checks that its declared peer dependencies are installed, at a satisfying
+  version, the moment it's imported. A missing or mismatched peer throws a clear, actionable error
+  naming the peer, the required range, and a ready-to-run `pnpm add -D` command, instead of failing
+  deep inside whichever tool that peer belongs to. See
+  [explanation.md](./docs/explanation.md#the-peer-check-engine).
+- `ARNAUD_ZG_CONFIGS_SKIP_PEER_CHECK` environment variable: set to any non-empty value to skip the
+  peer check everywhere (global, all-or-nothing), for environments where it isn't wanted.
+
 ## [0.2.1] - 2026-08-12
 
 ### Added
