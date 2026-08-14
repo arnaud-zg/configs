@@ -1,7 +1,7 @@
 import * as prettier from "prettier";
 import { describe, expect, test } from "vitest";
 
-import config from "../prettier/index.js";
+import config from "./index.js";
 
 describe("prettier", () => {
   test("sorts imports: node builtins, then react, then third-party, then relative", async () => {

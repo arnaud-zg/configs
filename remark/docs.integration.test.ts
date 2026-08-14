@@ -14,13 +14,13 @@ afterEach(() => {
   tmpDir = undefined;
 });
 
-function lint(configFile: string, markdown: string): { status: number; output: string } {
+function lint(markdown: string): { status: number; output: string } {
   tmpDir = mkdtempSync(path.join(os.tmpdir(), "remark-test-"));
   writeFileSync(path.join(tmpDir, "fixture.md"), markdown);
   writeFileSync(
     path.join(tmpDir, ".remarkrc.mjs"),
     [
-      `import base from ${JSON.stringify(path.join(root, configFile))};`,
+      `import base from ${JSON.stringify(path.join(root, "remark", "docs.mjs"))};`,
       "export default base;",
       "",
     ].join("\n"),
@@ -38,45 +38,16 @@ function lint(configFile: string, markdown: string): { status: number; output: s
   }
 }
 
-describe("remark/index.mjs", () => {
-  test("flags a missing final newline", () => {
-    const { status, output } = lint("remark/index.mjs", "# Title\n\nSome text.");
-    expect(status).toBe(1);
-    expect(output).toContain("final-newline");
-  });
-
-  test("raises no warnings on clean markdown", () => {
-    // remark echoes the processed document to stdout regardless of lint outcome, so success here
-    // is the exit code, not empty output.
-    const { status } = lint("remark/index.mjs", "# Title\n\nSome text.\n");
-    expect(status).toBe(0);
-  });
-
-  test("without frontmatter/gfm support, misflags a doc with frontmatter and a task list", () => {
-    // The exact failure mode remark/docs.mjs exists to fix: YAML frontmatter's list items read
-    // as misindented Markdown list items, and GFM task-list checkboxes read as undefined link
-    // references, once index.mjs alone (recommended rules, no extensions) parses the doc.
-    const { status, output } = lint(
-      "remark/index.mjs",
-      "---\ntags:\n  - docs\n  - guide\n---\n\n# Title\n\n- [ ] Do the thing\n- [x] Done thing\n",
-    );
-    expect(status).toBe(1);
-    expect(output).toContain("list-item-bullet-indent");
-    expect(output).toContain("no-undefined-references");
-  });
-});
-
 describe("remark/docs.mjs", () => {
   test("raises no warnings on a doc with frontmatter and task-list checkboxes", () => {
     const { status } = lint(
-      "remark/docs.mjs",
       "---\ntags:\n  - docs\n  - guide\n---\n\n# Title\n\n- [ ] Do the thing\n- [x] Done thing\n",
     );
     expect(status).toBe(0);
   });
 
   test("still flags a missing final newline (inherits index.mjs's recommended rules)", () => {
-    const { status, output } = lint("remark/docs.mjs", "# Title\n\nSome text.");
+    const { status, output } = lint("# Title\n\nSome text.");
     expect(status).toBe(1);
     expect(output).toContain("final-newline");
   });

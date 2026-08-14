@@ -4,35 +4,11 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
-const root = path.resolve(import.meta.dirname, "..");
+const root = import.meta.dirname;
 
-describe("lefthook.yml extends chain", () => {
-  test("dump merges the root config with the shared base", () => {
-    const output = execFileSync(path.join(root, "node_modules/.bin/lefthook"), ["dump"], {
-      cwd: root,
-      encoding: "utf8",
-    });
-    expect(output).toContain("pre-commit:");
-    expect(output).toContain("commit-msg:");
-    expect(output).toContain("post-checkout:");
-    expect(output).toContain("post-merge:");
-    expect(output).toContain("protect-main");
-  });
-
-  test("commit-msg hook delegates to commitlint", () => {
-    const output = execFileSync(path.join(root, "node_modules/.bin/lefthook"), ["dump"], {
-      cwd: root,
-      encoding: "utf8",
-    });
-    expect(output).toContain("pnpm exec commitlint --edit {1}");
-  });
-});
-
-// commitlint.config.mjs at the repo root extends ./commitlint/index.mjs, so this exercises the
-// exact same rules a consumer gets from @arnaud-zg/configs/commitlint, auto-discovered the same
-// way lefthook's commit-msg hook (`pnpm exec commitlint --edit {1}`) discovers it, no explicit
-// --config.
-describe("commitlint (repo root config)", () => {
+// Exercises the same rules a consumer gets from @arnaud-zg/configs/commitlint, auto-discovered
+// the same way lefthook's commit-msg hook does (`pnpm exec commitlint --edit {1}`).
+describe("commitlint.config.mjs", () => {
   let tmpDir: string | undefined;
 
   afterEach(() => {
