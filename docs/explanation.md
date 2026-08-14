@@ -153,5 +153,5 @@ to catch that, loose enough not to flake on a slow CI runner.
 Cost scales with directory depth to `node_modules`, not repo size: nothing here reads anything but
 `package.json` files on that one path. A huge monorepo differs from this one only if a package sits
 many workspace layers deep (Bazel/Nx-style, or unhoisted npm nesting). Measured up to 150 levels at
-~0.025ms/level, ~4ms total — deeper than any real install nests. The test fixes `DEPTH` at 100 and
+~0.025ms/level, ~4ms total, deeper than any real install nests. The test fixes `DEPTH` at 100 and
 asserts 50ms, ~10x that measured cost.
