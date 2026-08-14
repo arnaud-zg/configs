@@ -101,31 +101,31 @@ _behavior_, not to guard the peer contract, so nothing would fail if a future re
 of those imports for a fixture; this file's only job is to make that guarantee explicit and named,
 not incidental.
 
-| Layer          | File                                                     | Proves                                                                          |
-| -------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| ⚙️ Static      | `pnpm typecheck`                                         | Every file type-checks                                                          |
-| ⚙️ Static      | `pnpm lint`                                              | Every file is lint-clean                                                        |
-| ⚙️ Static      | `pnpm lint:md`                                           | Every Markdown file is lint-clean                                               |
-| ⚙️ Static      | `pnpm format:check`                                      | Every file is Prettier-formatted                                                |
-| 🧪 Unit        | `internal/package-range.value-object.unit.test.ts`       | `PackageRange` wraps a range and compares it, nothing else                      |
-| 🧪 Unit        | `internal/installed-package.value-object.unit.test.ts`   | `InstalledPackage` represents present/absent correctly                          |
-| 🧪 Unit        | `internal/peer-requirement.value-object.unit.test.ts`    | `PeerRequirement` checks a given fact, without resolving one itself             |
-| 🧪 Unit        | `internal/caret-range.unit.test.ts`                      | The hand-written caret-range comparator, including the 0.x edge cases           |
-| 🧪 Unit        | `internal/missing-peer-dependencies-error.unit.test.ts`  | The thrown error's message and structured fields                                |
-| 🧪 Unit        | `internal/peer-check-toggle.unit.test.ts`                | The escape-hatch env var, read in isolation                                     |
-| 🧪 Unit        | `internal/subpath-peer-registry.unit.test.ts`            | The subpath-to-peers table and its lookups                                      |
-| 🧪 Unit        | `package.unit.test.ts`                                   | `package.json`'s exports and peerDependencies are declared correctly            |
-| 🔗 Integration | `internal/resolve-installed-package.integration.test.ts` | The one real filesystem lookup, including the remark-cli `exports: []` fallback |
-| 🔗 Integration | `internal/peer-requirement-list.integration.test.ts`     | Real resolution plus aggregation, satisfied and unsatisfied                     |
-| 🔗 Integration | `eslint/base.integration.test.ts`                        | A real ESLint instance lints real code against the base config                  |
-| 🔗 Integration | `eslint/react.integration.test.ts`                       | A real ESLint + real tsc catch real JSX issues                                  |
-| 🔗 Integration | `prettier/index.integration.test.ts`                     | Real `prettier.format()` calls produce the expected output                      |
-| 🔗 Integration | `remark/index.integration.test.ts`                       | The real `remark` CLI lints real Markdown against the base config               |
-| 🔗 Integration | `remark/docs.integration.test.ts`                        | The real `remark` CLI against the docs config (frontmatter, GFM)                |
-| 🔗 Integration | `tsconfig/tsconfig.integration.test.ts`                  | Real `tsc` compiles fixtures against each tsconfig variant                      |
-| 🔗 Integration | `tsdown/base.integration.test.ts`                        | Real `tsdown` builds a fixture, and this repo's own `dist/`                     |
-| 🔗 Integration | `lefthook.integration.test.ts`                           | The real `lefthook` binary resolves this repo's hook chain                      |
-| 🔗 Integration | `commitlint.config.integration.test.ts`                  | The real `commitlint` binary accepts/rejects real commit messages               |
-| 🔗 Integration | `peer-check-consumer.integration.test.ts`                | A real import of a copied `prettier/index.js` enforces the peer check           |
-| 🔗 Integration | `devdependencies-satisfy-peers.integration.test.ts`      | This repo's own devDependencies satisfy every declared peer, explicitly         |
-| 🚀 E2E         | `tsdown-consumer.e2e.test.ts`                            | A real `pnpm pack` + `pnpm install` + build against the published tarball       |
+| Layer          | File                                                     | Proves                                                                                                                                                                          |
+| -------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ⚙️ Static      | `pnpm typecheck`                                         | Every file type-checks                                                                                                                                                          |
+| ⚙️ Static      | `pnpm lint`                                              | Every file is lint-clean                                                                                                                                                        |
+| ⚙️ Static      | `pnpm lint:md`                                           | Every Markdown file is lint-clean                                                                                                                                               |
+| ⚙️ Static      | `pnpm format:check`                                      | Every file is Prettier-formatted                                                                                                                                                |
+| 🧪 Unit        | `internal/package-range.value-object.unit.test.ts`       | `PackageRange` wraps a range and compares it, nothing else                                                                                                                      |
+| 🧪 Unit        | `internal/installed-package.value-object.unit.test.ts`   | `InstalledPackage` represents present/absent correctly                                                                                                                          |
+| 🧪 Unit        | `internal/peer-requirement.value-object.unit.test.ts`    | `PeerRequirement` checks a given fact, without resolving one itself                                                                                                             |
+| 🧪 Unit        | `internal/caret-range.unit.test.ts`                      | The hand-written caret-range comparator, including the 0.x edge cases                                                                                                           |
+| 🧪 Unit        | `internal/missing-peer-dependencies-error.unit.test.ts`  | The thrown error's message and structured fields                                                                                                                                |
+| 🧪 Unit        | `internal/peer-check-toggle.unit.test.ts`                | The escape-hatch env var, read in isolation                                                                                                                                     |
+| 🧪 Unit        | `internal/subpath-peer-registry.unit.test.ts`            | The subpath-to-peers table and its lookups                                                                                                                                      |
+| 🧪 Unit        | `package.unit.test.ts`                                   | `package.json`'s exports and peerDependencies are declared correctly                                                                                                            |
+| 🔗 Integration | `internal/resolve-installed-package.integration.test.ts` | The one real filesystem lookup, including the remark-cli `exports: []` fallback, plus performance regression guards for both a normal and a huge, deeply-nested monorepo layout |
+| 🔗 Integration | `internal/peer-requirement-list.integration.test.ts`     | Real resolution plus aggregation, satisfied and unsatisfied                                                                                                                     |
+| 🔗 Integration | `eslint/base.integration.test.ts`                        | A real ESLint instance lints real code against the base config                                                                                                                  |
+| 🔗 Integration | `eslint/react.integration.test.ts`                       | A real ESLint + real tsc catch real JSX issues                                                                                                                                  |
+| 🔗 Integration | `prettier/index.integration.test.ts`                     | Real `prettier.format()` calls produce the expected output                                                                                                                      |
+| 🔗 Integration | `remark/index.integration.test.ts`                       | The real `remark` CLI lints real Markdown against the base config                                                                                                               |
+| 🔗 Integration | `remark/docs.integration.test.ts`                        | The real `remark` CLI against the docs config (frontmatter, GFM)                                                                                                                |
+| 🔗 Integration | `tsconfig/tsconfig.integration.test.ts`                  | Real `tsc` compiles fixtures against each tsconfig variant                                                                                                                      |
+| 🔗 Integration | `tsdown/base.integration.test.ts`                        | Real `tsdown` builds a fixture, and this repo's own `dist/`                                                                                                                     |
+| 🔗 Integration | `lefthook.integration.test.ts`                           | The real `lefthook` binary resolves this repo's hook chain                                                                                                                      |
+| 🔗 Integration | `commitlint.config.integration.test.ts`                  | The real `commitlint` binary accepts/rejects real commit messages                                                                                                               |
+| 🔗 Integration | `peer-check-consumer.integration.test.ts`                | A real import of a copied `prettier/index.js` enforces the peer check                                                                                                           |
+| 🔗 Integration | `devdependencies-satisfy-peers.integration.test.ts`      | This repo's own devDependencies satisfy every declared peer, explicitly                                                                                                         |
+| 🚀 E2E         | `tsdown-consumer.e2e.test.ts`                            | A real `pnpm pack` + `pnpm install` + build against the published tarball                                                                                                       |

@@ -138,3 +138,20 @@ flowchart BT
 No Entity lives here, on purpose: nothing in this domain has identity that survives a state change.
 Every piece is either a stateless fact, resolved fresh each time, or a stateless comparison against
 it.
+
+## Why `resolve-installed-package.mjs` has a performance regression test
+
+It runs on every consumer's tool startup (`eslint`, `prettier`, `tsdown`, `remark`, `commitlint`),
+not just in CI, so it must stay cheap. Measured cost for this repo's own 19 peers: 4-5ms. The
+correctness tests only assert _that_ a version resolves, not how fast, so a future change swapping
+the `require()`/`readFileSync` fallback for something categorically slower (a spawned process, a
+network call) wouldn't be caught without a dedicated test. 50ms (~10x measured cost) is tight enough
+to catch that, loose enough not to flake on a slow CI runner.
+
+### Why there's a second guard for a huge, deeply-nested monorepo
+
+Cost scales with directory depth to `node_modules`, not repo size: nothing here reads anything but
+`package.json` files on that one path. A huge monorepo differs from this one only if a package sits
+many workspace layers deep (Bazel/Nx-style, or unhoisted npm nesting). Measured up to 150 levels at
+~0.025ms/level, ~4ms total, deeper than any real install nests. The test fixes `DEPTH` at 100 and
+asserts 50ms, ~10x that measured cost.
