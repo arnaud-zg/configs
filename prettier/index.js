@@ -1,3 +1,12 @@
+import { subpathPeerRegistry } from "../internal/subpath-peer-registry.mjs";
+import pkg from "../package.json" with { type: "json" };
+
+const prettierPeers = subpathPeerRegistry.requirementsFor(
+  "./prettier",
+  /** @type {Record<string, string>} */ (pkg.peerDependencies),
+);
+prettierPeers.assertSatisfied("@arnaud-zg/configs/prettier");
+
 /** @typedef {import("prettier").Config} PrettierConfig */
 /** @typedef {import("@ianvs/prettier-plugin-sort-imports").PluginConfig} SortImportsConfig */
 

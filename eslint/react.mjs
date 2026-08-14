@@ -3,7 +3,15 @@ import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import { defineConfig } from "eslint/config";
 
+import { subpathPeerRegistry } from "../internal/subpath-peer-registry.mjs";
+import pkg from "../package.json" with { type: "json" };
 import base from "./base.mjs";
+
+const eslintReactPeers = subpathPeerRegistry.requirementsFor(
+  "./eslint/react",
+  /** @type {Record<string, string>} */ (pkg.peerDependencies),
+);
+eslintReactPeers.assertSatisfied("@arnaud-zg/configs/eslint/react");
 
 // eslint-plugin-react types `configs.flat` as a plain Record, so indexing it is `T | undefined`
 // under noUncheckedIndexedAccess even though "recommended" always exists at runtime.

@@ -3,9 +3,18 @@ import prettier from "eslint-config-prettier";
 import { defineConfig } from "eslint/config";
 import tseslint from "typescript-eslint";
 
+import { subpathPeerRegistry } from "../internal/subpath-peer-registry.mjs";
+import pkg from "../package.json" with { type: "json" };
+
+const eslintPeers = subpathPeerRegistry.requirementsFor(
+  "./eslint",
+  /** @type {Record<string, string>} */ (pkg.peerDependencies),
+);
+eslintPeers.assertSatisfied("@arnaud-zg/configs/eslint");
+
 /**
  * Framework-agnostic base: recommended JS/TS rules, type-aware rules, and Prettier
- * compatibility. Does not configure `languageOptions.parserOptions` — the consuming
+ * compatibility. Does not configure `languageOptions.parserOptions`; the consuming
  * project supplies its own `project`/`projectService` pointing at its tsconfig(s).
  */
 export default defineConfig(
@@ -69,6 +78,6 @@ export default defineConfig(
     },
   },
 
-  // Must be last — turns off stylistic rules that would conflict with Prettier.
+  // Must be last: turns off stylistic rules that would conflict with Prettier.
   prettier,
 );
