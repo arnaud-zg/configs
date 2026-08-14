@@ -144,17 +144,18 @@ it.
 `SubpathPeerRegistry#requirementsFor` (see above) runs synchronously at import time, which means
 `resolveInstalledPackage` runs on every consumer's tool startup: every `eslint`, `prettier`,
 `tsdown`, `remark`, and `commitlint` invocation, not just once in CI. Measured against this repo's
-own 19 declared peers, the real cost is under 10ms total, including the directory-walk fallback for
-packages like `remark-cli` whose `exports` field blocks `require()`-based resolution. That's cheap
-enough to not matter next to what those tools already cost to start up, but nothing stops a future
-change from replacing the `require()`/`readFileSync` fallback with something categorically slower, a
-spawned process or a registry network call, and that regression wouldn't show up in any other test
-here: the correctness tests only assert _that_ a version resolves, not how.
+own 19 declared peers, the real cost is consistently 4-5ms total across repeated runs, including the
+directory-walk fallback for packages like `remark-cli` whose `exports` field blocks
+`require()`-based resolution. That's cheap enough to not matter next to what those tools already
+cost to start up, but nothing stops a future change from replacing the `require()`/`readFileSync`
+fallback with something categorically slower, a spawned process or a registry network call, and that
+regression wouldn't show up in any other test here: the correctness tests only assert _that_ a
+version resolves, not how.
 
-`internal/resolve-installed-package.integration.test.ts` guards against that with a generous
-threshold (200ms for all 19 peers, ~30x today's measured cost), not a tight one. A tight budget
-would flake on a slow CI runner without catching anything a generous one doesn't; the point is to
-catch "someone made this categorically slower," not to chase milliseconds.
+`internal/resolve-installed-package.integration.test.ts` guards against that with a 50ms threshold
+for all 19 peers, ~10x today's measured cost: enough headroom that a slow CI runner won't flake it,
+tight enough that a spawned process or network call (each realistically costing tens of milliseconds
+on its own, before even counting 19 of them) still trips it.
 
 ### Why there's a second guard for a huge, deeply-nested monorepo
 

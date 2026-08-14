@@ -30,21 +30,21 @@ describe("resolveInstalledPackage", () => {
     expect(resolveInstalledPackage("remark-cli").isPresent()).toBe(true);
   });
 
-  // Regression guard, not a tight budget: this runs synchronously on every consumer's tool
-  // startup (every eslint/prettier/tsdown/remark/commitlint invocation), so it must stay cheap.
-  // The threshold is generous on purpose (today's real cost is under 10ms; see
-  // explanation.md#why-resolve-installed-packagemjs-has-a-performance-regression-test) — it's
-  // meant to catch a future change that swaps the require()/readFileSync fallback for something
-  // categorically slower (a spawned process, a registry network call), not to flake on a busy CI
-  // runner.
-  test("resolves every one of this repo's own declared peers well within a generous budget", () => {
+  // Regression guard: this runs synchronously on every consumer's tool startup (every
+  // eslint/prettier/tsdown/remark/commitlint invocation), so it must stay cheap. The threshold
+  // still has headroom on top of measured reality (consistently 4-5ms locally across repeated
+  // runs; see explanation.md#why-resolve-installed-packagemjs-has-a-performance-regression-test),
+  // but it's tight enough to catch a future change that swaps the require()/readFileSync fallback
+  // for something categorically slower (a spawned process, a registry network call) without
+  // chasing milliseconds so hard it flakes on a busy CI runner.
+  test("resolves every one of this repo's own declared peers well within budget", () => {
     const names = Object.keys(pkg.peerDependencies);
 
     const start = performance.now();
     for (const name of names) resolveInstalledPackage(name);
     const elapsed = performance.now() - start;
 
-    expect(elapsed).toBeLessThan(200);
+    expect(elapsed).toBeLessThan(50);
   });
 });
 
