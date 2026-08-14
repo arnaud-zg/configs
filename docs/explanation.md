@@ -138,3 +138,20 @@ flowchart BT
 No Entity lives here, on purpose: nothing in this domain has identity that survives a state change.
 Every piece is either a stateless fact, resolved fresh each time, or a stateless comparison against
 it.
+
+## Why `resolve-installed-package.mjs` has a performance regression test
+
+`SubpathPeerRegistry#requirementsFor` (see above) runs synchronously at import time, which means
+`resolveInstalledPackage` runs on every consumer's tool startup: every `eslint`, `prettier`,
+`tsdown`, `remark`, and `commitlint` invocation, not just once in CI. Measured against this repo's
+own 19 declared peers, the real cost is under 10ms total, including the directory-walk fallback for
+packages like `remark-cli` whose `exports` field blocks `require()`-based resolution. That's cheap
+enough to not matter next to what those tools already cost to start up, but nothing stops a future
+change from replacing the `require()`/`readFileSync` fallback with something categorically slower, a
+spawned process or a registry network call, and that regression wouldn't show up in any other test
+here: the correctness tests only assert _that_ a version resolves, not how.
+
+`internal/resolve-installed-package.integration.test.ts` guards against that with a generous
+threshold (200ms for all 19 peers, ~30x today's measured cost), not a tight one. A tight budget
+would flake on a slow CI runner without catching anything a generous one doesn't; the point is to
+catch "someone made this categorically slower," not to chase milliseconds.
