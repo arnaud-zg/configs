@@ -30,13 +30,8 @@ describe("resolveInstalledPackage", () => {
     expect(resolveInstalledPackage("remark-cli").isPresent()).toBe(true);
   });
 
-  // Regression guard: this runs synchronously on every consumer's tool startup (every
-  // eslint/prettier/tsdown/remark/commitlint invocation), so it must stay cheap. The threshold
-  // still has headroom on top of measured reality (consistently 4-5ms locally across repeated
-  // runs; see explanation.md#why-resolve-installed-packagemjs-has-a-performance-regression-test),
-  // but it's tight enough to catch a future change that swaps the require()/readFileSync fallback
-  // for something categorically slower (a spawned process, a registry network call) without
-  // chasing milliseconds so hard it flakes on a busy CI runner.
+  // Regression guard: runs on every consumer's tool startup, so it must stay cheap (see
+  // explanation.md#why-resolve-installed-packagemjs-has-a-performance-regression-test).
   test("resolves every one of this repo's own declared peers well within budget", () => {
     const names = Object.keys(pkg.peerDependencies);
 
@@ -48,17 +43,10 @@ describe("resolveInstalledPackage", () => {
   });
 });
 
-// resolveInstalledPackage's cost scales with directory depth between its own location and wherever
-// the target package's node_modules folder sits, not with the consuming repo's file count or lines
-// of code: nothing here ever reads anything but package.json files on that one path. A monorepo
-// with a huge codebase but a normal node_modules layout costs the same as the test above; what
-// actually stresses this function is directory nesting (e.g. a package many workspace layers deep
-// in a large Bazel/Nx-style monorepo), so that's the one variable this fixture exercises.
+// Cost scales with directory depth to node_modules, not repo size (see
+// explanation.md#why-theres-a-second-guard-for-a-huge-deeply-nested-monorepo).
 describe("resolveInstalledPackage from deep inside a huge monorepo's directory tree", () => {
-  // Far deeper than any real npm/pnpm/yarn install nests node_modules: measured up to 150 levels by
-  // hand while writing this test, at roughly 0.025ms/level, ~4ms total (see
-  // explanation.md#why-resolve-installed-packagemjs-has-a-performance-regression-test). 100 is
-  // already an unrealistic worst case; the threshold below still leaves ~10x headroom on top of it.
+  // Deeper than any real install nests node_modules; see explanation.md linked above.
   const DEPTH = 100;
 
   let tmpDir: string | undefined;
@@ -85,9 +73,7 @@ describe("resolveInstalledPackage from deep inside a huge monorepo's directory t
       path.join(internalDir, "installed-package.value-object.mjs"),
     );
 
-    // exports: [] blocks require()'s fast path, same as the real remark-cli regression this file
-    // already covers above, forcing the manual directory-walk fallback across the full DEPTH-level
-    // chain before it succeeds at the workspace root — the exact code path this test is about.
+    // exports: [] forces the walk fallback, same as remark-cli above.
     const targetName = "deeply-nested-peer-fixture";
     const targetDir = path.join(dir, "node_modules", targetName);
     mkdirSync(targetDir, { recursive: true });

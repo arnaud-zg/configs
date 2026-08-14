@@ -141,37 +141,17 @@ it.
 
 ## Why `resolve-installed-package.mjs` has a performance regression test
 
-`SubpathPeerRegistry#requirementsFor` (see above) runs synchronously at import time, which means
-`resolveInstalledPackage` runs on every consumer's tool startup: every `eslint`, `prettier`,
-`tsdown`, `remark`, and `commitlint` invocation, not just once in CI. Measured against this repo's
-own 19 declared peers, the real cost is consistently 4-5ms total across repeated runs, including the
-directory-walk fallback for packages like `remark-cli` whose `exports` field blocks
-`require()`-based resolution. That's cheap enough to not matter next to what those tools already
-cost to start up, but nothing stops a future change from replacing the `require()`/`readFileSync`
-fallback with something categorically slower, a spawned process or a registry network call, and that
-regression wouldn't show up in any other test here: the correctness tests only assert _that_ a
-version resolves, not how.
-
-`internal/resolve-installed-package.integration.test.ts` guards against that with a 50ms threshold
-for all 19 peers, ~10x today's measured cost: enough headroom that a slow CI runner won't flake it,
-tight enough that a spawned process or network call (each realistically costing tens of milliseconds
-on its own, before even counting 19 of them) still trips it.
+It runs on every consumer's tool startup (`eslint`, `prettier`, `tsdown`, `remark`, `commitlint`),
+not just in CI, so it must stay cheap. Measured cost for this repo's own 19 peers: 4-5ms. The
+correctness tests only assert _that_ a version resolves, not how fast, so a future change swapping
+the `require()`/`readFileSync` fallback for something categorically slower (a spawned process, a
+network call) wouldn't be caught without a dedicated test. 50ms (~10x measured cost) is tight enough
+to catch that, loose enough not to flake on a slow CI runner.
 
 ### Why there's a second guard for a huge, deeply-nested monorepo
 
-A natural worry: does this get slower for a consumer with a huge codebase, say a monorepo with
-hundreds of thousands of lines across thousands of files? No — `resolveInstalledPackage` never reads
-anything but `package.json` files on the single path between its own location and wherever the
-target package's `node_modules` folder sits, so total file count and lines of code in the consuming
-repo are irrelevant. The one variable that actually drives its cost is directory depth: how many
-levels separate this package's installed location from the `node_modules` that holds the peer.
-
-That's the realistic way a "huge organization" repo could differ from this one: a package many
-workspace layers deep in a large Bazel/Nx-style monorepo, or an unhoisted npm install with deep
-transitive nesting, rather than a normal-depth `node_modules`. Measured by hand while writing the
-second describe block in `resolve-installed-package.integration.test.ts`, the walk fallback costs
-roughly 0.025ms per directory level, linearly, up to 150 levels (already deeper than any real
-npm/pnpm/yarn install has been seen to nest) for under 4ms total. The test fixes `DEPTH` at 100 — an
-unrealistic worst case on its own — and still asserts a 50ms ceiling on top of that, about 10x
-today's measured cost at that depth, for the same reason the first guard's threshold is generous:
-catch a categorical regression, don't chase milliseconds or flake on a slow runner.
+Cost scales with directory depth to `node_modules`, not repo size: nothing here reads anything but
+`package.json` files on that one path. A huge monorepo differs from this one only if a package sits
+many workspace layers deep (Bazel/Nx-style, or unhoisted npm nesting). Measured up to 150 levels at
+~0.025ms/level, ~4ms total — deeper than any real install nests. The test fixes `DEPTH` at 100 and
+asserts 50ms, ~10x that measured cost.
