@@ -146,7 +146,10 @@ describe("a real consumer installing the published package (end to end)", () => 
     const output = `${failure?.stdout}\n${failure?.stderr}`;
     expect(output).toContain("@arnaud-zg/configs/tsdown is missing required peer dependencies");
     expect(output).toContain("typescript");
-    expect(output).toContain(pkg.peerDependencies.typescript);
+    // A literal, not pkg.peerDependencies.typescript: the expected value must stay independent of
+    // whatever the code under test also reads, or a bug that corrupts both sides the same way
+    // would still pass. Bump this by hand alongside package.json if that range ever changes.
+    expect(output).toContain("^6.0.3");
   }, 20_000);
 
   // Companion to the missing-typescript case: a version mismatch, not an unresolved package.
@@ -161,9 +164,7 @@ describe("a real consumer installing the published package (end to end)", () => 
     ).toBeDefined();
     const output = `${failure?.stdout}\n${failure?.stderr}`;
     expect(output).toContain("@arnaud-zg/configs/tsdown is missing required peer dependencies");
-    expect(output).toContain(
-      `typescript  1.0.0 installed, needs ${pkg.peerDependencies.typescript}`,
-    );
+    expect(output).toContain("typescript  1.0.0 installed, needs ^6.0.3");
   }, 20_000);
 });
 
