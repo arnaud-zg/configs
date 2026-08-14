@@ -8,6 +8,9 @@ import pkg from "./package.json" with { type: "json" };
 const root = import.meta.dirname;
 const peerDependencies = pkg.peerDependencies as Record<string, string>;
 
+// For building fixture input only (a version that satisfies whatever's really declared). Assertion
+// strings below are literals instead: an expected value computed from the same package.json the
+// code under test also reads could mask a bug that corrupts both sides identically.
 function rangeFor(name: string): string {
   const range = peerDependencies[name];
   if (!range) throw new Error(`no peerDependencies range declared for "${name}"`);
@@ -68,11 +71,9 @@ describe("importing @arnaud-zg/configs/prettier as a real consumer would", () =>
 
     const message = await messageFromImporting(path.join(dir, "prettier", "index.js"));
     expect(message).toContain("@arnaud-zg/configs/prettier is missing required peer dependencies");
+    expect(message).toContain("prettier-plugin-packagejson  not installed (needs ^3.0.2)");
     expect(message).toContain(
-      `prettier-plugin-packagejson  not installed (needs ${rangeFor("prettier-plugin-packagejson")})`,
-    );
-    expect(message).toContain(
-      `pnpm add -D prettier@${rangeFor("prettier")} @ianvs/prettier-plugin-sort-imports@${rangeFor("@ianvs/prettier-plugin-sort-imports")} prettier-plugin-packagejson@${rangeFor("prettier-plugin-packagejson")}`,
+      "pnpm add -D prettier@^3.8.3 @ianvs/prettier-plugin-sort-imports@^4.3.1 prettier-plugin-packagejson@^3.0.2",
     );
   });
 
@@ -87,9 +88,7 @@ describe("importing @arnaud-zg/configs/prettier as a real consumer would", () =>
     });
 
     const message = await messageFromImporting(path.join(dir, "prettier", "index.js"));
-    expect(message).toContain(
-      `prettier-plugin-packagejson  0.0.1 installed, needs ${rangeFor("prettier-plugin-packagejson")}`,
-    );
+    expect(message).toContain("prettier-plugin-packagejson  0.0.1 installed, needs ^3.0.2");
   });
 
   test("does not throw when every peer is installed and satisfies its range", async () => {
