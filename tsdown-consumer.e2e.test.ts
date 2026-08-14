@@ -134,7 +134,7 @@ describe("a real consumer installing the published package (end to end)", () => 
     expect(failure).toBeUndefined();
     expect(existsSync(path.join(consumerDir, "dist", "index.js"))).toBe(true);
     expect(existsSync(path.join(consumerDir, "dist", "index.d.ts"))).toBe(true);
-  }, 60_000);
+  }, 20_000);
 
   // typescript is only needed once tsdown's dts plugin runs, so without PeerRequirementList a
   // missing typescript used to fail deep inside rolldown-plugin-dts instead of naming the peer.
@@ -147,7 +147,7 @@ describe("a real consumer installing the published package (end to end)", () => 
     expect(output).toContain("@arnaud-zg/configs/tsdown is missing required peer dependencies");
     expect(output).toContain("typescript");
     expect(output).toContain(pkg.peerDependencies.typescript);
-  }, 60_000);
+  }, 20_000);
 
   // Companion to the missing-typescript case: a version mismatch, not an unresolved package.
   test("fails naming an installed-but-incompatible typescript version, not tsdown's own dts error", () => {
@@ -164,7 +164,7 @@ describe("a real consumer installing the published package (end to end)", () => 
     expect(output).toContain(
       `typescript  1.0.0 installed, needs ${pkg.peerDependencies.typescript}`,
     );
-  }, 60_000);
+  }, 20_000);
 });
 
 describe("the published tarball", () => {
