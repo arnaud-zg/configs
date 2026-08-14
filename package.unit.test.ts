@@ -43,4 +43,15 @@ describe("a developer following the install instructions", () => {
       }
     },
   );
+
+  // Catches the opposite drift: a peerDependency nothing actually requires anymore, e.g. left
+  // behind after removing a subpath from subpath-peers.config.mjs.
+  test("every declared peerDependency is required by some subpath (no orphans)", () => {
+    const requiredPeers = new Set(requiredPeersBySubpath.flatMap(([, peers]) => peers));
+    for (const peer of Object.keys(pkg.peerDependencies)) {
+      expect(requiredPeers.has(peer), `"${peer}" is declared but no subpath requires it`).toBe(
+        true,
+      );
+    }
+  });
 });

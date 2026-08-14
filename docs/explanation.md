@@ -112,12 +112,14 @@ flowchart BT
         PRL["PeerRequirementList"]
         ERR["MissingPeerDependenciesError"]
         REG["SubpathPeerRegistry"]
+        CONFIG["subpath-peers.config.mjs"]
         PRL --> PQ
         PRL --> RIP
         PRL --> TOGGLE
         PRL --> ERR
         REG --> PQ
         REG --> PRL
+        CONFIG --> REG
     end
 
     ENTRY["a subpath entry file"] --> REG
@@ -132,8 +134,12 @@ flowchart BT
   escape hatch, checked once per subpath, in one place.
 - **`PeerRequirementList`** is where the two meet: it asks the resolver for real facts, asks each
   requirement to check itself, and throws `MissingPeerDependenciesError` if anything failed.
-- **`SubpathPeerRegistry`** is what every subpath entry file actually calls: it owns the
-  subpath-to-peer-names table and builds the `PeerRequirement`s a `PeerRequirementList` needs.
+- **`SubpathPeerRegistry`** is what every subpath entry file actually calls: it builds the
+  `PeerRequirement`s a `PeerRequirementList` needs from `subpath-peers.config.mjs`'s
+  subpath-to-peer-names table, kept as a separate, plain-data file so editing it (adding a subpath,
+  changing its peers) needs no code changes. `package.unit.test.ts` checks it against
+  `peerDependencies` in both directions: nothing declared there is missing here, and nothing here is
+  orphaned there.
 
 No Entity lives here, on purpose: nothing in this domain has identity that survives a state change.
 Every piece is either a stateless fact, resolved fresh each time, or a stateless comparison against
