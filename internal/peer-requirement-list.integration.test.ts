@@ -50,7 +50,9 @@ describe("PeerRequirementList", () => {
   });
 
   test("assertSatisfied skips validation and warns when the escape hatch env var is set", () => {
-    process.env[peerCheckToggleEnvVar] = "1";
+    // The literal documented name, not peerCheckToggleEnvVar: this proves the real, documented
+    // escape hatch works, not just that this test stays internally consistent with itself.
+    process.env.ARNAUD_ZG_CONFIGS_SKIP_PEER_CHECK = "1";
     const list = new PeerRequirementList([
       new PeerRequirement("@arnaud-zg/does-not-exist-fixture", "^1.0.0"),
     ]);
@@ -58,7 +60,7 @@ describe("PeerRequirementList", () => {
 
     expect(() => list.assertSatisfied("@arnaud-zg/configs/test")).not.toThrow();
     expect(warnSpy).toHaveBeenCalledWith(
-      `@arnaud-zg/configs/test: peer checks skipped (${peerCheckToggleEnvVar} is set)`,
+      "@arnaud-zg/configs/test: peer checks skipped (ARNAUD_ZG_CONFIGS_SKIP_PEER_CHECK is set)",
     );
 
     warnSpy.mockRestore();
