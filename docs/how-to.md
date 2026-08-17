@@ -56,6 +56,11 @@ multi-subpath `exports` map, add `exports: false` so the build doesn't overwrite
 
 ## Add Git hooks with Lefthook
 
+⚠️ Lefthook runs shell commands on every commit/push. Read
+[`lefthook/lefthook.yml`](../lefthook/lefthook.yml) in full before wiring it in, and pin the exact
+`@arnaud-zg/configs` version you install (see [README](../README.md#-before-you-install)). Open an
+issue if anything in there isn't clear.
+
 ```sh
 pnpm add -D lefthook prettier @commitlint/cli @commitlint/config-conventional
 ```

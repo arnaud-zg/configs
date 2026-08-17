@@ -13,6 +13,12 @@ parser; remark-lint's no-undefined-references rule would otherwise flag every ve
 
 ## [Unreleased]
 
+### Changed
+
+- Docs: install commands now pin an exact version instead of a range, and the README/how-to guides
+  add an explicit security-review note (read the files you're installing, especially
+  `lefthook/lefthook.yml`, before adding this as a dependency).
+
 ## [0.3.0] - 2026-08-14
 
 ### Added
@@ -47,7 +53,7 @@ parser; remark-lint's no-undefined-references rule would otherwise flag every ve
 
 - `lefthook/lefthook.yml`'s `commit-msg` hook now runs `pnpm exec commitlint --edit {1}` instead of
   a hand-rolled shell script, so it needs a `commitlint.config.mjs` in the consuming project
-  (extending `@arnaud-zg/configs/commitlint` or `@commitlint/config-conventional` directly) — see
+  (extending `@arnaud-zg/configs/commitlint` or `@commitlint/config-conventional` directly), see
   [how-to.md](./docs/how-to.md#enforce-conventional-commits).
 
 ### Removed
