@@ -7,8 +7,12 @@ Wire up ESLint, Prettier, and a tsconfig in a fresh TypeScript project. Five ste
 
 ## 1. Install
 
+Pin an exact version rather than a range, so updates only land when you choose to bump it. See the
+[README](../README.md#-security-know-what-youre-installing) for why, and review the files before
+installing.
+
 ```sh
-pnpm add -D @arnaud-zg/configs typescript
+pnpm add -D @arnaud-zg/configs@0.3.0 typescript
 ```
 
 ## 2. Add a tsconfig

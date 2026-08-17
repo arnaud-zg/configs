@@ -56,6 +56,12 @@ multi-subpath `exports` map, add `exports: false` so the build doesn't overwrite
 
 ## Add Git hooks with Lefthook
 
+⚠️ Lefthook runs shell commands on every commit/push. Read
+[`lefthook/lefthook.yml`](../lefthook/lefthook.yml) in full before wiring it in, and pin the exact
+`@arnaud-zg/configs` version you install (see
+[README](../README.md#-security-know-what-youre-installing)). Open an issue if anything in there
+isn't clear.
+
 ```sh
 pnpm add -D lefthook prettier @commitlint/cli @commitlint/config-conventional
 ```
@@ -159,14 +165,17 @@ pnpm typecheck && pnpm lint && pnpm lint:md && pnpm format:check && pnpm test
 git checkout -b release/prep
 pnpm version patch --no-git-tag-version   # or minor / major
 VERSION=$(node -p "require('./package.json').version")
-git add package.json pnpm-lock.yaml CHANGELOG.md
+node -e "const fs=require('fs');for(const f of ['README.md','docs/tutorial.md']){fs.writeFileSync(f,fs.readFileSync(f,'utf8').replaceAll(/@arnaud-zg\/configs@[0-9]+\.[0-9]+\.[0-9]+/g,'@arnaud-zg/configs@$VERSION'))}"
+git add package.json pnpm-lock.yaml CHANGELOG.md README.md docs/tutorial.md
 git commit -m "chore(release): v$VERSION"
 git push -u origin release/prep
 gh pr create --fill
 ```
 
-Move `[Unreleased]` entries in [`CHANGELOG.md`](../CHANGELOG.md) into a dated section before
-committing. After the PR merges:
+That `node -e` rewrites every pinned `@arnaud-zg/configs@x.y.z` install example (currently in
+[README.md](../README.md) and [tutorial.md](./tutorial.md)) to the new version, so the docs never
+recommend installing a version older than the one you're releasing. Move `[Unreleased]` entries in
+[`CHANGELOG.md`](../CHANGELOG.md) into a dated section before committing. After the PR merges:
 
 ```sh
 git checkout main && git pull
