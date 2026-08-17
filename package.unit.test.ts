@@ -37,7 +37,8 @@ describe("a developer following the install instructions", () => {
       for (const peer of peers) {
         expect(pkg.peerDependencies, `missing peerDependency "${peer}"`).toHaveProperty(peer);
         expect(
-          (pkg.peerDependenciesMeta as Record<string, { optional?: boolean }>)[peer]?.optional,
+          (pkg.peerDependenciesMeta as Record<string, { optional?: boolean } | undefined>)[peer]
+            ?.optional,
           `peerDependency "${peer}" should be optional`,
         ).toBe(true);
       }

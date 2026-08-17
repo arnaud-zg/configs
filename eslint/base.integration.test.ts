@@ -10,7 +10,7 @@ describe("eslint/base", () => {
   const eslint = new ESLint({ overrideConfigFile: true, baseConfig });
 
   async function lintFixture(source: string): Promise<ESLint.LintResult> {
-    const [result] = await eslint.lintText(source, { filePath: "fixture.js" });
+    const result = (await eslint.lintText(source, { filePath: "fixture.js" })).at(0);
     if (!result) throw new Error("expected exactly one lint result");
     return result;
   }
