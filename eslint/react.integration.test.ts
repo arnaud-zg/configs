@@ -80,7 +80,7 @@ describe("eslint/react", () => {
         cwd: tmpDir,
       });
       const source = readFileSync(fixturePath, "utf8");
-      const [result] = await eslint.lintText(source, { filePath: fixturePath });
+      const result = (await eslint.lintText(source, { filePath: fixturePath })).at(0);
       const ruleIds = (result?.messages ?? []).map((m) => m.ruleId);
       expect(ruleIds).toContain("jsx-a11y/alt-text");
       expect(ruleIds).toContain("jsx-a11y/click-events-have-key-events");
