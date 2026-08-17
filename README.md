@@ -12,8 +12,10 @@ pnpm add -D @arnaud-zg/configs@0.3.0
 ```
 
 Always pin the exact version above (not `^0.3.0` or `latest`) rather than a range, so an update to
-this package only reaches your project when you deliberately bump it. This repo follows semver, so
-patch/minor bumps should be safe, but pinning is still the right default for anything you depend on.
+this package only reaches your project when you deliberately bump it. This repo follows semver, but
+that's a promise about intent, not a guarantee: you can't know what a future version will contain
+until you've read it. Never trust a dependency by default, including this one. Pin the exact version
+you've actually reviewed, and only move to a newer one after reviewing that too.
 
 ## ⚠️ Before you install
 
