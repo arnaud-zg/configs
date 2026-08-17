@@ -18,6 +18,9 @@ parser; remark-lint's no-undefined-references rule would otherwise flag every ve
 - Docs: install commands now pin an exact version instead of a range, and the README/how-to guides
   add an explicit security-review note (read the files you're installing, especially
   `lefthook/lefthook.yml`, before adding this as a dependency).
+- The release flow (`docs/how-to.md#release-a-new-version`) now rewrites those pinned install
+  examples to the new version as part of the release branch, so they can't drift behind an actual
+  release.
 
 ## [0.3.0] - 2026-08-14
 
