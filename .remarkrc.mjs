@@ -1,3 +1,3 @@
-import base from "./remark/index.mjs";
+import docs from "./remark/docs.mjs";
 
-export default base;
+export default docs;

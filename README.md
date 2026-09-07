@@ -60,6 +60,33 @@ Don't install anything, from me or anyone else, that you haven't verified yourse
 | `@arnaud-zg/configs/remark`          | remark-lint recommended preset                   |
 | `@arnaud-zg/configs/commitlint`      | Conventional Commits, mandatory scope            |
 
+## 🤖 Claude Code plugins
+
+This repository is also a [Claude Code](https://claude.com/claude-code) plugin marketplace: a
+catalogue of skills, subagents, hooks and MCP servers that install with a version and uninstall
+cleanly, instead of being copy-pasted into `~/.claude/`.
+
+```sh
+/plugin marketplace add arnaud-zg/configs
+/plugin install <plugin>@arnaud-zg
+```
+
+The catalogue is **empty for now** — `.claude-plugin/marketplace.json` lists no plugins, and
+`templates/plugin-template/` is the starting point to add one. None of this ships in the npm
+package: the marketplace is consumed with `git clone`, the configs with `pnpm add`.
+
+The same warning as above applies, more sharply: a plugin's hooks run shell commands on your machine
+and its MCP servers talk to remote endpoints, with no sandbox. Read `hooks/`, `.mcp.json` and
+`dependencies` before installing anything, here or anywhere else.
+
+- 🚀 **[Tutorial](./docs/plugins/tutorial.md)**: build and install your first plugin, end to end.
+- 🛠️ **[How-to guides](./docs/plugins/how-to.md)**: add a skill, agent, hook, MCP server or
+  dependency; test locally; release; rename.
+- 📖 **[Reference](./docs/plugins/reference.md)**: every manifest field, component discovery rule,
+  and CLI command.
+- 💡 **[Explanation](./docs/plugins/explanation.md)**: what skills, plugins and marketplaces are,
+  and why the layers are split that way.
+
 ## License
 
 MIT

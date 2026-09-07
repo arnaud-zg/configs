@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "example-remote": {
+      "type": "http",
+      "url": "https://example.com/mcp"
+    },
+    "example-local": {
+      "command": "npx",
+      "args": ["-y", "<your-mcp-server-package>"]
+    }
+  }
+}
