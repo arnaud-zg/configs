@@ -13,6 +13,19 @@ parser; remark-lint's no-undefined-references rule would otherwise flag every ve
 
 ## [Unreleased]
 
+### Fixed
+
+- `pnpm build` failed with `Failed to load the config file` / `Cannot find module .../tsdown/base`,
+  which also broke `prepack` and therefore `pnpm publish`. tsdown's default config loader resolves
+  the config's imports natively and cannot infer the `.ts` extension that `tsdown.config.ts` relies
+  on, so `pnpm build` now passes `--config-loader unrun` — the loader that file was always written
+  against. `tsdown/base.integration.test.ts` generated its fixture configs from the same
+  extensionless path and now points at `tsdown/base.ts` directly.
+- The tsdown consumer end-to-end test installed its fixture with `pnpm install --offline`, assuming
+  every transitive dependency was already in the local store. The consumer resolves without this
+  repo's lockfile, so a newer patch of a transitive dependency (`tinyexec` 1.3.1 against the locked
+  1.3.0) made it fail with `ERR_PNPM_NO_OFFLINE_TARBALL`. It now uses `--prefer-offline`.
+
 ### Changed
 
 - Docs: install commands now pin an exact version instead of a range, and the README/how-to guides
