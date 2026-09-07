@@ -64,7 +64,7 @@
     "!**/*.test.ts"
   ],
   "scripts": {
-    "build": "tsdown",
+    "build": "tsdown --config-loader unrun",
     "changeset": "changeset",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

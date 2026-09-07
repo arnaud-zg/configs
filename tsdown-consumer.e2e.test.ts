@@ -83,8 +83,11 @@ function buildConsumer(devDependencyOverrides: Record<string, string | undefined
       "",
     ].join("\n"),
   );
-  // --offline: these are already this repo's own devDependencies, already in the local store.
-  execFileSync("pnpm", ["install", "--offline"], { cwd: consumerDir, stdio: "pipe" });
+  // --prefer-offline: these are mostly this repo's own devDependencies and already in the local
+  // store, but the consumer resolves fresh without this repo's lockfile, so a transitive dependency
+  // can resolve to a newer patch than the store holds (tinyexec 1.3.1 vs the locked 1.3.0). Strict
+  // --offline turned that into ERR_PNPM_NO_OFFLINE_TARBALL every time such a patch was published.
+  execFileSync("pnpm", ["install", "--prefer-offline"], { cwd: consumerDir, stdio: "pipe" });
   return consumerDir;
 }
 

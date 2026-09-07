@@ -13,7 +13,7 @@ import path from "node:path";
 import { afterEach, describe, expect, test } from "vitest";
 
 const root = path.resolve(import.meta.dirname, "..");
-const tsdownBase = path.join(root, "tsdown", "base");
+const tsdownBase = path.join(root, "tsdown", "base.ts");
 const tsdownBin = path.join(root, "node_modules/.bin/tsdown");
 
 let tmpDir: string | undefined;
@@ -72,7 +72,10 @@ describe("tsdown build (integration)", () => {
     rmSync(distDir, { recursive: true, force: true });
     try {
       const start = performance.now();
-      execFileSync(tsdownBin, { cwd: root, stdio: "pipe" });
+      // Runs the `build` script rather than the tsdown binary directly, so this covers the flags
+      // the real build depends on (currently --config-loader unrun) instead of a bare invocation
+      // that would drift from it.
+      execFileSync("pnpm", ["build"], { cwd: root, stdio: "pipe" });
       expect(performance.now() - start).toBeLessThan(10_000);
       expect(existsSync(path.join(distDir, "base.js"))).toBe(true);
       expect(existsSync(path.join(distDir, "base.d.ts"))).toBe(true);
