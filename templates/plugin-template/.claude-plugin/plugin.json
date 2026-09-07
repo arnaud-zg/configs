@@ -1,0 +1,15 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "plugin-template",
+  "displayName": "Plugin Template",
+  "version": "0.1.0",
+  "description": "Copy this directory into plugins/ to start a new plugin. Replace every TODO before listing it in the marketplace.",
+  "author": {
+    "name": "Arnaud Zheng",
+    "url": "https://github.com/arnaud-zg"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/arnaud-zg/configs",
+  "keywords": ["template"],
+  "dependencies": []
+}

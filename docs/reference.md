@@ -56,6 +56,15 @@ Not shipped to consumers: `devDependencies` never propagate.
 | `pnpm prepack`   | `pnpm build` (runs automatically before `pnpm pack` / `pnpm publish`)                 |
 | `pnpm prepare`   | `lefthook install` (runs automatically after `pnpm install`)                          |
 
+Release scripts, covering the npm package and every plugin in one flow — see
+[How-to](./how-to.md#release-a-new-version):
+
+| Script                 | Runs                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------ |
+| `pnpm changeset`       | `changeset` — records which packages a change affects and how much to bump them            |
+| `pnpm release:version` | `changeset version`, then `scripts/sync-versions.mjs`, then `pnpm install --lockfile-only` |
+| `pnpm release`         | `pnpm build`, then `changeset publish --no-git-tag`, then `scripts/release-tags.mjs`       |
+
 ## Package layout
 
 ```
@@ -68,7 +77,17 @@ remark/       index.mjs, docs.mjs
 commitlint/   index.mjs
 internal/     the peer-check engine (see Explanation), not a public export
 dist/         base.js, base.d.ts (built from tsdown/base.ts at publish time, gitignored otherwise)
+
+.changeset/       one Markdown file per unreleased change; the release flow consumes these
+scripts/          release helpers, run by pnpm release:version and pnpm release
+.claude-plugin/   marketplace.json — the Claude Code plugin catalogue
+plugins/          published plugins (empty for now)
+templates/        plugin-template, copied to start a new plugin
+docs/plugins/     plugin documentation
 ```
+
+The last five are outside `files`, so the marketplace shares the repository without shipping in the
+npm tarball. See [the plugin docs](./plugins/explanation.md) for what they are.
 
 `package.json`'s `files` ships the eight public directories above plus `internal/` and `LICENSE`.
 `dist/` doesn't exist in the repo itself; it's produced by the `prepack` script right before

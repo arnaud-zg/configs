@@ -1,0 +1,15 @@
+{
+  "description": "TODO — what these hooks do. Delete this file if the plugin has no hooks.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks-handlers/on-session-start.sh"
+          }
+        ]
+      }
+    ]
+  }
+}
