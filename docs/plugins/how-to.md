@@ -15,6 +15,9 @@ cp -R templates/plugin-template plugins/<name>
 3. Delete the component directories the plugin does not use.
 4. Add an entry to `.claude-plugin/marketplace.json` with `"source": "<name>"`.
 5. `claude plugin validate . --strict`
+6. `pnpm test` — `marketplace.unit.test.ts` fails if the package name, the manifest name and the
+   directory disagree, if the versions drift apart, or if the plugin is missing from the catalogue.
+   Those are the steps that are easy to skip when copying the template.
 
 ## Add a skill to an existing plugin
 
