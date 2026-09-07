@@ -7,7 +7,6 @@
     "url": "https://github.com/arnaud-zg"
   },
   "metadata": {
-    "version": "0.1.0",
     "pluginRoot": "./plugins"
   },
   "plugins": []
