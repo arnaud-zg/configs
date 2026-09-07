@@ -148,6 +148,9 @@ import base from "@arnaud-zg/configs/remark/docs";
 export default base;
 ```
 
+This repository uses it for exactly that reason: `plugins/` and `templates/` carry `SKILL.md` and
+agent files whose YAML frontmatter the base config misreads as an indented list.
+
 ## Run this repo's own tests
 
 For people working on `@arnaud-zg/configs` itself:
@@ -192,3 +195,25 @@ pnpm publish
 The `NOTES` extraction pulls the matching `## [$VERSION]` section out of `CHANGELOG.md`, so the tag
 (annotated, not lightweight) and the GitHub Release both carry that version's changelog entry
 instead of being empty.
+
+### Plugins release separately
+
+This repository carries two release trains. They share no version, tag scheme, or changelog:
+
+| Artifact             | Consumed with                              | Version lives in                                 | Tag              |
+| -------------------- | ------------------------------------------ | ------------------------------------------------ | ---------------- |
+| `@arnaud-zg/configs` | `pnpm add`                                 | `package.json`                                   | `v0.3.0`         |
+| Claude Code plugins  | `git clone`, via `/plugin marketplace add` | each `plugins/<name>/.claude-plugin/plugin.json` | `<name>--v0.1.0` |
+
+The steps above release the npm package only. A plugin has no publish step at all: the marketplace
+_is_ this git repository, so merging to `main` is what ships it, and consumers pick it up on their
+next `claude plugin marketplace update`. Bumping a plugin's `version` and tagging it with
+`claude plugin tag` does two narrower jobs — it makes the plugin resolvable by a dependency range
+like `ts-base@^1.2.0`, and it gives a `git-subdir` entry something to pin.
+
+Full steps in [the plugin how-to](./plugins/how-to.md#release-a-version).
+
+`CHANGELOG.md` covers the package only. Plugin changes do not belong in it — they are not part of
+the published tarball, and their versions move independently. Record them in the plugin's own
+`CHANGELOG.md` if it needs one; otherwise the git history and the `<name>--v<version>` tags are the
+record.

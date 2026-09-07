@@ -1,8 +1,12 @@
 # Changelog
 
-All notable changes to this project are documented here. Format follows
+All notable changes to the `@arnaud-zg/configs` package are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versioning follows
 [Semantic Versioning](https://semver.org/).
+
+This file does not cover the Claude Code plugins in `plugins/`. They ship through the marketplace
+rather than npm and are versioned per plugin — see
+[docs/how-to.md#plugins-release-separately](./docs/how-to.md#plugins-release-separately).
 
 Before running `pnpm version`, move the entries below out of `[Unreleased]` into a new dated section
 for that version.
@@ -13,7 +17,17 @@ parser; remark-lint's no-undefined-references rule would otherwise flag every ve
 
 ## [Unreleased]
 
+### Added
+
+- This repository is now a Claude Code plugin marketplace: `.claude-plugin/marketplace.json`, an
+  empty `plugins/` catalogue, `templates/plugin-template`, and documentation in `docs/plugins/`.
+  None of it ships in the npm tarball.
+
 ### Changed
+
+- `docs/` is still published, but `docs/plugins/` is excluded from the tarball via `files`.
+- The repo's own `.remarkrc.mjs` now extends `@arnaud-zg/configs/remark/docs` instead of the base
+  preset, so `SKILL.md` and agent frontmatter is parsed rather than misflagged.
 
 - Docs: install commands now pin an exact version instead of a range, and the README/how-to guides
   add an explicit security-review note (read the files you're installing, especially
