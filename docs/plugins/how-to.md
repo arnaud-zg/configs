@@ -9,9 +9,12 @@ cp -R templates/plugin-template plugins/<name>
 ```
 
 1. Set `name` in `plugins/<name>/.claude-plugin/plugin.json` to match the directory.
-2. Delete the component directories the plugin does not use.
-3. Add an entry to `.claude-plugin/marketplace.json` with `"source": "<name>"`.
-4. `claude plugin validate . --strict`
+2. Set `name` in `plugins/<name>/package.json` to `@arnaud-zg/plugin-<name>`. That file is private
+   and never published — it exists so changesets can version the plugin. See
+   [why](../how-to.md#why-plugins-carry-a-packagejson).
+3. Delete the component directories the plugin does not use.
+4. Add an entry to `.claude-plugin/marketplace.json` with `"source": "<name>"`.
+5. `claude plugin validate . --strict`
 
 ## Add a skill to an existing plugin
 
@@ -138,20 +141,24 @@ is worth publishing.
 
 ## Release a version
 
-1. Bump `version` in the plugin's `plugin.json`.
-2. Merge to `main`.
-3. Tag:
+Plugins release through the same flow as the npm package — there is only one:
 
 ```sh
-claude plugin tag plugins/<name>     # creates <name>--v<version>
-git push --tags
+pnpm changeset          # on the PR that changes the plugin
+pnpm release:version    # on a release branch, then PR and merge
+pnpm release            # on clean main
 ```
 
-`claude plugin tag` refuses to tag if `plugin.json` and the marketplace entry disagree, which is the
-check you want before a version becomes resolvable by a dependency range.
+`changeset version` bumps the plugin's private `package.json`; `scripts/sync-versions.mjs` copies
+that version into `.claude-plugin/plugin.json` and the marketplace entry; `scripts/release-tags.mjs`
+then runs `claude plugin tag`, which refuses to tag unless those two agree.
 
-Consumers pick it up with `claude plugin update <name>`, or automatically if their marketplace is
-set to auto-update. Updates apply on restart.
+Full steps and the reasoning in [the release how-to](../how-to.md#release-a-new-version).
+
+A plugin needs no publish step: the marketplace is this git repository, so merging to `main` is what
+ships it. Consumers pick it up with `claude plugin update <name>`, or automatically if their
+marketplace auto-updates. Updates apply on restart. The version and tag matter for dependency ranges
+(`ts-base@^1.2.0`) and for `git-subdir` pinning.
 
 ## Rename a plugin
 

@@ -65,6 +65,7 @@
   ],
   "scripts": {
     "build": "tsdown",
+    "changeset": "changeset",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "lint": "eslint .",
@@ -72,11 +73,14 @@
     "lint:md": "remark . --frail --quiet",
     "prepack": "pnpm build",
     "prepare": "lefthook install",
+    "release": "pnpm build && changeset publish --no-git-tag && node scripts/release-tags.mjs",
+    "release:version": "changeset version && node scripts/sync-versions.mjs && pnpm install --lockfile-only",
     "test": "vitest run",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.vitest.json --noEmit"
   },
   "prettier": "./prettier/index.js",
   "devDependencies": {
+    "@changesets/cli": "^3.0.2",
     "@commitlint/cli": "^21.2.1",
     "@commitlint/config-conventional": "^21.2.0",
     "@eslint/js": "^9.39.4",

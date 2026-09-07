@@ -162,58 +162,79 @@ pnpm typecheck && pnpm lint && pnpm lint:md && pnpm format:check && pnpm test
 
 ## Release a new version
 
-`main` is protected, so the version bump happens on a branch first.
+One flow releases everything — the npm package and every plugin. Changesets is the entry point, and
+you never edit a version or a changelog by hand.
+
+### 1. Describe the change
+
+Any pull request that should show up in a release carries a changeset:
+
+```sh
+pnpm changeset
+```
+
+It asks which packages changed and how much to bump them, then writes a Markdown file into
+`.changeset/`. Commit that file with your work. Plugins appear in the list next to
+`@arnaud-zg/configs` because each one has a private `package.json` beside its `plugin.json` — see
+[why](#why-plugins-carry-a-packagejson).
+
+For a change that needs no release at all, `pnpm changeset add --empty` records that decision
+explicitly.
+
+### 2. Version, on a branch
+
+`main` is protected, so versioning happens on a branch:
 
 ```sh
 git checkout -b release/prep
-pnpm version patch --no-git-tag-version   # or minor / major
-VERSION=$(node -p "require('./package.json').version")
-node -e "const fs=require('fs');for(const f of ['README.md','docs/tutorial.md']){fs.writeFileSync(f,fs.readFileSync(f,'utf8').replaceAll(/@arnaud-zg\/configs@[0-9]+\.[0-9]+\.[0-9]+/g,'@arnaud-zg/configs@$VERSION'))}"
-git add package.json pnpm-lock.yaml CHANGELOG.md README.md docs/tutorial.md
-git commit -m "chore(release): v$VERSION"
+pnpm release:version
+git commit -am "chore(release): version packages"
 git push -u origin release/prep
 gh pr create --fill
 ```
 
-That `node -e` rewrites every pinned `@arnaud-zg/configs@x.y.z` install example (currently in
-[README.md](../README.md) and [tutorial.md](./tutorial.md)) to the new version, so the docs never
-recommend installing a version older than the one you're releasing. Move `[Unreleased]` entries in
-[`CHANGELOG.md`](../CHANGELOG.md) into a dated section before committing. After the PR merges:
+`pnpm release:version` is three steps:
+
+| Step                             | What it does                                                                                                                                           |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `changeset version`              | consumes `.changeset/*.md`, bumps every affected `package.json`, writes the changelogs                                                                 |
+| `node scripts/sync-versions.mjs` | copies each plugin's new version into its `plugin.json` and marketplace entry, and rewrites the pinned `@arnaud-zg/configs@x.y.z` examples in the docs |
+| `pnpm install --lockfile-only`   | refreshes the lockfile for the bumped workspace versions                                                                                               |
+
+The sync step exists because changesets only understands `package.json`. `claude plugin tag` refuses
+to tag when a plugin's manifest and its marketplace entry disagree, so this is what keeps them in
+step.
+
+### 3. Publish, after the PR merges
 
 ```sh
 git checkout main && git pull
-VERSION=$(node -p "require('./package.json').version")
-NOTES=$(awk -v ver="$VERSION" 'BEGIN{gsub(/\./,"\\.",ver)} $0~"^## \\["ver"\\]"{f=1;next} /^## \[/{f=0} f' CHANGELOG.md)
-[ -n "$NOTES" ] || { echo "No CHANGELOG.md entry found for v$VERSION. Was [Unreleased] moved into a dated section?" >&2; exit 1; }
-git tag -a "v$VERSION" -m "v$VERSION" -m "$NOTES"
-git push --tags
-gh release create "v$VERSION" --title "v$VERSION" --notes "$NOTES"
-pnpm publish --dry-run   # sanity-check first
-pnpm publish
+pnpm release
+git push --follow-tags
+gh release create "v$(node -p "require('./package.json').version")" --generate-notes
 ```
 
-The `NOTES` extraction pulls the matching `## [$VERSION]` section out of `CHANGELOG.md`, so the tag
-(annotated, not lightweight) and the GitHub Release both carry that version's changelog entry
-instead of being empty.
+`pnpm release` builds, publishes to npm, then tags:
 
-### Plugins release separately
+| Artifact             | Tag              | Created by                                                          |
+| -------------------- | ---------------- | ------------------------------------------------------------------- |
+| `@arnaud-zg/configs` | `v0.3.1`         | `scripts/release-tags.mjs`, annotated with its changelog section    |
+| each plugin          | `<name>--v0.2.0` | `claude plugin tag`, which checks manifest agreement before tagging |
 
-This repository carries two release trains. They share no version, tag scheme, or changelog:
+`changeset publish` runs with `--no-git-tag`, because its monorepo tag format
+(`@arnaud-zg/configs@0.3.1`) matches neither convention this repository uses. `claude plugin tag`
+refuses to run on a dirty tree, so release from a clean `main`.
 
-| Artifact             | Consumed with                              | Version lives in                                 | Tag              |
-| -------------------- | ------------------------------------------ | ------------------------------------------------ | ---------------- |
-| `@arnaud-zg/configs` | `pnpm add`                                 | `package.json`                                   | `v0.3.0`         |
-| Claude Code plugins  | `git clone`, via `/plugin marketplace add` | each `plugins/<name>/.claude-plugin/plugin.json` | `<name>--v0.1.0` |
+### What a plugin release actually ships
 
-The steps above release the npm package only. A plugin has no publish step at all: the marketplace
-_is_ this git repository, so merging to `main` is what ships it, and consumers pick it up on their
-next `claude plugin marketplace update`. Bumping a plugin's `version` and tagging it with
-`claude plugin tag` does two narrower jobs — it makes the plugin resolvable by a dependency range
-like `ts-base@^1.2.0`, and it gives a `git-subdir` entry something to pin.
+Nothing is uploaded anywhere. The marketplace _is_ this git repository, so a plugin reaches
+consumers the moment the change lands on `main` and they run `claude plugin marketplace update`. The
+version and the tag do two narrower jobs: they make the plugin resolvable by a dependency range like
+`ts-base@^1.2.0`, and they give a `git-subdir` entry something to pin.
 
-Full steps in [the plugin how-to](./plugins/how-to.md#release-a-version).
+### Why plugins carry a package.json
 
-`CHANGELOG.md` covers the package only. Plugin changes do not belong in it — they are not part of
-the published tarball, and their versions move independently. Record them in the plugin's own
-`CHANGELOG.md` if it needs one; otherwise the git history and the `<name>--v<version>` tags are the
-record.
+A plugin's real manifest is `.claude-plugin/plugin.json`. The `package.json` beside it is private,
+never published, and exists only so changesets can see the plugin as a workspace package and version
+it; `scripts/sync-versions.mjs` copies the result across. Keeping two files in step is the price of
+one release flow instead of two — the alternative was versioning every plugin by hand.

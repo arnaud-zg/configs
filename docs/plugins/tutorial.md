@@ -32,6 +32,15 @@ name:
 
 Delete `dependencies` and `keywords` for now; both are optional.
 
+Then set the matching name in `plugins/hello-tools/package.json`:
+
+```jsonc
+{ "name": "@arnaud-zg/plugin-hello-tools", "version": "0.1.0", "private": true }
+```
+
+That file is private and never published. It exists so changesets can version the plugin alongside
+the npm package — see [why](../how-to.md#why-plugins-carry-a-packagejson).
+
 ## 3. Write one skill
 
 Rename the example and give it a real trigger:
@@ -136,12 +145,14 @@ claude plugin uninstall hello-tools
 claude plugin marketplace remove arnaud-zg
 ```
 
-To publish instead, commit the plugin, open a pull request, and after merge:
+To publish instead, record a changeset, commit the plugin, and open a pull request:
 
 ```sh
-claude plugin tag plugins/hello-tools     # creates hello-tools--v0.1.0, checking the manifests agree
-git push --tags
+pnpm changeset       # pick @arnaud-zg/plugin-hello-tools
 ```
+
+After it merges, the release flow versions and tags it along with everything else — see
+[the release how-to](../how-to.md#release-a-new-version).
 
 Anyone can then run:
 

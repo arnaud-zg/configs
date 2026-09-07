@@ -1,0 +1,6 @@
+{
+  "name": "@arnaud-zg/plugin-template",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Not published to npm. This file exists so changesets can version the plugin; the plugin's real manifest is .claude-plugin/plugin.json."
+}

@@ -1,7 +1,7 @@
 # 🤝 Contributing
 
-Thanks for helping improve `@arnaud-zg/configs`. This is a small, single-package repo, the workflow
-is intentionally lightweight.
+Thanks for helping improve `@arnaud-zg/configs`. The repo holds the npm package and a Claude Code
+plugin marketplace; the workflow is intentionally lightweight for both.
 
 ## Setup
 
@@ -20,10 +20,16 @@ pnpm install
 ```sh
 git checkout -b my-change
 # ...edit...
+pnpm changeset          # unless the change needs no release
 git commit -m "feat(eslint): add a new rule"
 git push -u origin my-change
 gh pr create --fill
 ```
+
+`pnpm changeset` writes a file into `.changeset/` recording which packages your change affects and
+how much to bump them — the npm package, a plugin, or both. Commit it with your work; the release
+flow consumes it later. If the change needs no release at all, `pnpm changeset add --empty` says so
+explicitly.
 
 Commit messages follow Conventional Commits: `type(scope): description`, types are `feat`, `fix`,
 `test`, `refactor`, `chore`, `docs`, `perf` (append `!` before the colon for a breaking change).
