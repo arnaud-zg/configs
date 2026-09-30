@@ -158,15 +158,19 @@ is worth publishing.
 Plugins release through the same flow as the npm package — there is only one:
 
 ```sh
-pnpm changeset          # on the PR that changes the plugin
-pnpm release:version    # on a release branch, then PR and merge
-pnpm release            # on clean main
+pnpm changeset          # in the PR that changes the plugin
+pnpm release:version    # opens the release PR; review and merge it
+pnpm release            # after the merge: tags and creates the GitHub release
 ```
 
-`changeset version` bumps the plugin's private `package.json`; `scripts/sync-versions.mjs` copies
-that version into `.claude-plugin/plugin.json`; `scripts/release-tags.mjs` then tags it with
-`claude plugin tag`. Each plugin has its own version, changelog (`plugins/<name>/CHANGELOG.md`) and
-`<name>--v<version>` tag, and a changeset bumps only the plugins it names.
+`pnpm release:version` bumps the plugin's private `package.json` and copies that version into
+`.claude-plugin/plugin.json`; `pnpm release` finds the new version, tags it with
+`claude plugin tag`, pushes the tag and creates its GitHub release. Each plugin has its own version,
+changelog (`plugins/<name>/CHANGELOG.md`) and `<name>--v<version>` tag, and a changeset bumps only
+the plugins it names.
+
+A new plugin needs no changeset for its first version: once it is on `main`, `pnpm release` releases
+the version it starts with.
 
 Leave `version` out of the plugin's marketplace entry. Claude Code reads `plugin.json` first, so a
 version there is ignored at install time, can only go stale, and makes `claude plugin tag` refuse to

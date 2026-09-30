@@ -73,8 +73,8 @@
     "lint:md": "remark . --frail --quiet",
     "prepack": "pnpm build",
     "prepare": "lefthook install",
-    "release": "pnpm build && changeset publish --no-git-tag && node scripts/release-tags.mjs",
-    "release:version": "changeset version && node scripts/sync-versions.mjs && pnpm install --lockfile-only",
+    "release": "node scripts/release.mjs",
+    "release:version": "node scripts/release-version.mjs",
     "test": "vitest run",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.vitest.json --noEmit"
   },
