@@ -162,8 +162,14 @@ pnpm typecheck && pnpm lint && pnpm lint:md && pnpm format:check && pnpm test
 
 ## Release a new version
 
-One flow releases everything — the npm package and every plugin. Changesets is the entry point, and
-you never edit a version or a changelog by hand.
+One flow releases everything — the npm package and every plugin — with the same three commands.
+Changesets is the entry point, and you never edit a version, a changelog or a tag by hand.
+
+```sh
+pnpm changeset          # 1. in the PR that makes the change
+pnpm release:version    # 2. opens the release PR; review and merge it
+pnpm release            # 3. after the merge: publishes, tags, creates the GitHub releases
+```
 
 ### 1. Describe the change
 
@@ -175,56 +181,64 @@ pnpm changeset
 
 It asks which packages changed and how much to bump them, then writes a Markdown file into
 `.changeset/`. Commit that file with your work. Plugins appear in the list next to
-`@arnaud-zg/configs` because each one has a private `package.json` beside its `plugin.json` — see
-[why](#why-plugins-carry-a-packagejson).
+`@arnaud-zg/configs` as `@arnaud-zg/plugin-<name>`, because each one has a private `package.json`
+beside its `plugin.json` — see [why](#why-plugins-carry-a-packagejson). To skip the prompts:
+
+```sh
+pnpm changeset add --minor @arnaud-zg/plugin-hello-tools -m "Add the audit-deps skill"
+```
 
 For a change that needs no release at all, `pnpm changeset add --empty` records that decision
 explicitly.
 
-### 2. Version, on a branch
-
-`main` is protected, so versioning happens on a branch:
+### 2. Open the release PR
 
 ```sh
-git checkout -b release/prep
 pnpm release:version
-git commit -am "chore(release): version packages"
-git push -u origin release/prep
-gh pr create --fill
 ```
 
-`pnpm release:version` is three steps:
+Run it with a clean working tree. It switches to an up-to-date `main` and, if any changesets are
+pending, does the rest:
 
-| Step                             | What it does                                                                                                                     |
-| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `changeset version`              | consumes `.changeset/*.md`, bumps every affected `package.json`, writes the changelogs                                           |
-| `node scripts/sync-versions.mjs` | copies each plugin's new version into its `plugin.json`, and rewrites the pinned `@arnaud-zg/configs@x.y.z` examples in the docs |
-| `pnpm install --lockfile-only`   | refreshes the lockfile for the bumped workspace versions                                                                         |
+| Step                                | What it does                                                                                                                     |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `git switch -c release/<timestamp>` | `main` is protected, so versions only reach it through a PR                                                                      |
+| `changeset version`                 | consumes `.changeset/*.md`, bumps every affected `package.json`, writes the changelogs                                           |
+| `node scripts/sync-versions.mjs`    | copies each plugin's new version into its `plugin.json`, and rewrites the pinned `@arnaud-zg/configs@x.y.z` examples in the docs |
+| `pnpm install --lockfile-only`      | refreshes the lockfile for the bumped workspace versions                                                                         |
+| commit, push, `gh pr create`        | opens the PR, listing every bump                                                                                                 |
+
+With no pending changesets it says so and stops. Review the PR, then merge it.
 
 The sync step exists because changesets only understands `package.json`, while Claude Code reads a
 plugin's version from `plugin.json`. Marketplace entries carry no version — `plugin.json` would
 override it at install time anyway — so there is nothing to sync into the catalogue, and
 `marketplace.unit.test.ts` fails if one appears.
 
-### 3. Publish, after the PR merges
+### 3. Release, after the PR merges
 
 ```sh
-git checkout main && git pull
 pnpm release
-git push --follow-tags
-gh release create "v$(node -p "require('./package.json').version")" --generate-notes
 ```
 
-`pnpm release` builds, publishes to npm, then tags:
+It switches to an up-to-date `main` and works out what is new by itself: every current version — the
+package's and each plugin's — that has no GitHub release yet. For each one:
 
-| Artifact             | Tag              | Created by                                                       |
-| -------------------- | ---------------- | ---------------------------------------------------------------- |
-| `@arnaud-zg/configs` | `v0.3.1`         | `scripts/release-tags.mjs`, annotated with its changelog section |
-| each plugin          | `<name>--v0.2.0` | `claude plugin tag`, which validates the plugin before tagging   |
+| Artifact             | npm                                                       | Tag                                                                        | GitHub release notes                                              |
+| -------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `@arnaud-zg/configs` | published by `changeset publish`                          | `v0.3.1`, annotated with its changelog section                             | its section of `CHANGELOG.md`                                     |
+| each plugin          | none — see [below](#what-a-plugin-release-actually-ships) | `<name>--v0.2.0`, by `claude plugin tag`, which validates the plugin first | its section of `plugins/<name>/CHANGELOG.md`, or "First release." |
 
-`changeset publish` runs with `--no-git-tag`, because its monorepo tag format
-(`@arnaud-zg/configs@0.3.1`) matches neither convention this repository uses. `claude plugin tag`
-refuses to run on a dirty tree, so release from a clean `main`.
+The tags are pushed, then the GitHub releases created. A plugin's release is never marked "Latest",
+so the package's keeps that spot on the repository page.
+
+The npm publish runs before anything is tagged, so a failed publish leaves nothing half-released.
+Every step is safe to repeat: fix whatever stopped it and run `pnpm release` again. With nothing
+new, it says so and stops.
+
+It needs `gh auth login`, the `claude` CLI on your `PATH`, and `npm login` when the package has a
+new version. `changeset publish` runs with `--no-git-tag`, because its monorepo tag format
+(`@arnaud-zg/configs@0.3.1`) matches neither convention this repository uses.
 
 ### What a plugin release actually ships
 

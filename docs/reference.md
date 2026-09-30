@@ -59,11 +59,11 @@ Not shipped to consumers: `devDependencies` never propagate.
 Release scripts, covering the npm package and every plugin in one flow — see
 [How-to](./how-to.md#release-a-new-version):
 
-| Script                 | Runs                                                                                       |
-| ---------------------- | ------------------------------------------------------------------------------------------ |
-| `pnpm changeset`       | `changeset` — records which packages a change affects and how much to bump them            |
-| `pnpm release:version` | `changeset version`, then `scripts/sync-versions.mjs`, then `pnpm install --lockfile-only` |
-| `pnpm release`         | `pnpm build`, then `changeset publish --no-git-tag`, then `scripts/release-tags.mjs`       |
+| Script                 | Runs                                                                                                                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm changeset`       | `changeset` — records which packages a change affects and how much to bump them                                                                                                       |
+| `pnpm release:version` | `scripts/release-version.mjs`: on a new `release/` branch, `changeset version`, `scripts/sync-versions.mjs` and `pnpm install --lockfile-only`, then commits, pushes and opens the PR |
+| `pnpm release`         | `scripts/release.mjs`: for every version without a GitHub release, `pnpm build` and `changeset publish --no-git-tag` (package only), then the tag, its push, and the GitHub release   |
 
 ## Package layout
 
