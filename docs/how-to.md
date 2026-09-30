@@ -195,15 +195,16 @@ gh pr create --fill
 
 `pnpm release:version` is three steps:
 
-| Step                             | What it does                                                                                                                                           |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `changeset version`              | consumes `.changeset/*.md`, bumps every affected `package.json`, writes the changelogs                                                                 |
-| `node scripts/sync-versions.mjs` | copies each plugin's new version into its `plugin.json` and marketplace entry, and rewrites the pinned `@arnaud-zg/configs@x.y.z` examples in the docs |
-| `pnpm install --lockfile-only`   | refreshes the lockfile for the bumped workspace versions                                                                                               |
+| Step                             | What it does                                                                                                                     |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `changeset version`              | consumes `.changeset/*.md`, bumps every affected `package.json`, writes the changelogs                                           |
+| `node scripts/sync-versions.mjs` | copies each plugin's new version into its `plugin.json`, and rewrites the pinned `@arnaud-zg/configs@x.y.z` examples in the docs |
+| `pnpm install --lockfile-only`   | refreshes the lockfile for the bumped workspace versions                                                                         |
 
-The sync step exists because changesets only understands `package.json`. `claude plugin tag` refuses
-to tag when a plugin's manifest and its marketplace entry disagree, so this is what keeps them in
-step.
+The sync step exists because changesets only understands `package.json`, while Claude Code reads a
+plugin's version from `plugin.json`. Marketplace entries carry no version — `plugin.json` would
+override it at install time anyway — so there is nothing to sync into the catalogue, and
+`marketplace.unit.test.ts` fails if one appears.
 
 ### 3. Publish, after the PR merges
 
@@ -216,10 +217,10 @@ gh release create "v$(node -p "require('./package.json').version")" --generate-n
 
 `pnpm release` builds, publishes to npm, then tags:
 
-| Artifact             | Tag              | Created by                                                          |
-| -------------------- | ---------------- | ------------------------------------------------------------------- |
-| `@arnaud-zg/configs` | `v0.3.1`         | `scripts/release-tags.mjs`, annotated with its changelog section    |
-| each plugin          | `<name>--v0.2.0` | `claude plugin tag`, which checks manifest agreement before tagging |
+| Artifact             | Tag              | Created by                                                       |
+| -------------------- | ---------------- | ---------------------------------------------------------------- |
+| `@arnaud-zg/configs` | `v0.3.1`         | `scripts/release-tags.mjs`, annotated with its changelog section |
+| each plugin          | `<name>--v0.2.0` | `claude plugin tag`, which validates the plugin before tagging   |
 
 `changeset publish` runs with `--no-git-tag`, because its monorepo tag format
 (`@arnaud-zg/configs@0.3.1`) matches neither convention this repository uses. `claude plugin tag`
@@ -227,10 +228,27 @@ refuses to run on a dirty tree, so release from a clean `main`.
 
 ### What a plugin release actually ships
 
-Nothing is uploaded anywhere. The marketplace _is_ this git repository, so a plugin reaches
-consumers the moment the change lands on `main` and they run `claude plugin marketplace update`. The
-version and the tag do two narrower jobs: they make the plugin resolvable by a dependency range like
-`ts-base@^1.2.0`, and they give a `git-subdir` entry something to pin.
+Nothing is uploaded anywhere — the marketplace _is_ this git repository — but merging a plugin
+change to `main` does not ship it. Claude Code decides whether an installed plugin has an update by
+comparing versions, and it reads the version from `plugin.json` first. Until that string changes,
+`claude plugin update` reports the plugin as already at the latest version, however many commits
+land.
+
+The release PR from step 2 is what ships a plugin: merging it changes the version in `plugin.json`.
+Users then get the new code with `claude plugin update <name>`, or on their next auto-update if they
+turned it on for this marketplace — it is off by default for marketplaces not run by Anthropic.
+
+Two consequences:
+
+- A plugin change merged to `main` waits for the next release PR, so several can ship together.
+- Someone who installs the plugin in that window gets the new code under the old version number.
+  Keep the window short.
+
+Catalogue edits in `marketplace.json` — descriptions, categories — carry no version and reach users
+on their next `claude plugin marketplace update`.
+
+The tag from step 3 does a narrower job: it makes the plugin resolvable by a dependency range like
+`ts-base@^1.2.0`, and gives a `git-subdir` entry something to pin.
 
 ### Why plugins carry a package.json
 

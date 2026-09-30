@@ -5,8 +5,8 @@
  * (`@arnaud-zg/configs@0.3.1`) matches neither convention this repository needs:
  *
  *   - the npm package is tagged `v<version>`, annotated, carrying its changelog entry;
- *   - each plugin is tagged `<name>--v<version>` by `claude plugin tag`, which also checks that
- *     plugin.json and the marketplace entry agree before tagging.
+ *   - each plugin is tagged `<name>--v<version>` by `claude plugin tag`, which validates the
+ *     plugin and takes the version from plugin.json.
  *
  * Run as part of `pnpm release`, never on its own. Tags are created locally; push them yourself
  * after checking them.
@@ -55,7 +55,7 @@ if (tagExists(tag)) {
   console.info(`  ${tag}`);
 }
 
-// 2. Each plugin: <name>--v<version>, via the CLI so manifest agreement is checked.
+// 2. Each plugin: <name>--v<version>, via the CLI so the plugin is validated before it is tagged.
 const pluginsDir = path.join(root, "plugins");
 for (const entry of readdirSync(pluginsDir, { withFileTypes: true })) {
   if (!entry.isDirectory()) continue;

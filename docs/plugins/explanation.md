@@ -88,10 +88,11 @@ plugins. It is the thing a user adds once:
 /plugin marketplace add arnaud-zg/configs
 ```
 
-From then on they can install any plugin it lists, and `claude plugin marketplace update` pulls new
-versions. Trust is granted at this level, not per plugin — adding a marketplace means accepting
-whatever its maintainer lists, now and later. That is why cross-marketplace dependencies require an
-explicit allowlist (see below): adding one marketplace must not silently pull code from another.
+From then on they can install any plugin it lists; `claude plugin marketplace update` refreshes the
+list, and `claude plugin update` installs a plugin's newer version. Trust is granted at this level,
+not per plugin — adding a marketplace means accepting whatever its maintainer lists, now and later.
+That is why cross-marketplace dependencies require an explicit allowlist (see below): adding one
+marketplace must not silently pull code from another.
 
 A marketplace does not have to host the plugins it lists. Entries can point at subdirectories of
 other repositories, pinned to a tag and a commit SHA, which is how the official catalogue lists
