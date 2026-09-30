@@ -13,11 +13,13 @@ cp -R templates/plugin-template plugins/<name>
    and never published — it exists so changesets can version the plugin. See
    [why](../how-to.md#why-plugins-carry-a-packagejson).
 3. Delete the component directories the plugin does not use.
-4. Add an entry to `.claude-plugin/marketplace.json` with `"source": "<name>"`.
+4. Add an entry to `.claude-plugin/marketplace.json` with `"source": "<name>"` and no `version` —
+   `plugin.json` carries it.
 5. `claude plugin validate . --strict`
 6. `pnpm test` — `marketplace.unit.test.ts` fails if the package name, the manifest name and the
-   directory disagree, if the versions drift apart, or if the plugin is missing from the catalogue.
-   Those are the steps that are easy to skip when copying the template.
+   directory disagree, if the versions drift apart, if the catalogue entry carries a version, or if
+   the plugin is missing from the catalogue. Those are the steps that are easy to skip when copying
+   the template.
 
 ## Add a skill to an existing plugin
 
@@ -67,12 +69,17 @@ handler scripts through `${CLAUDE_PLUGIN_ROOT}`, which expands to the installed 
     "PreToolUse": [
       {
         "matcher": "Bash",
-        "hooks": [{ "type": "command", "command": "${CLAUDE_PLUGIN_ROOT}/hooks-handlers/guard.sh" }]
+        "hooks": [
+          { "type": "command", "command": "\"${CLAUDE_PLUGIN_ROOT}/hooks-handlers/guard.sh\"" }
+        ]
       }
     ]
   }
 }
 ```
+
+Keep the escaped quotes: the expanded path can contain spaces, and `claude plugin validate --strict`
+fails on an unquoted `${CLAUDE_PLUGIN_ROOT}`.
 
 Hooks run on the installing machine, on every matching tool call. Keep them fast and make them exit
 non-zero only when you genuinely want to block.
@@ -114,6 +121,10 @@ that marketplace at the root:
 To constrain the version, append a range: `"ts-base@^1.2.0"`. It resolves against the dependency's
 git tags, so the dependency must be tagged (see below).
 
+Changesets does not see these ranges — they live in `plugin.json`, not `package.json` — so a major
+bump of `ts-base` neither updates nor warns the plugins that depend on `^1.x`. Update their ranges
+by hand in the same release.
+
 ## Test locally before pushing
 
 ```sh
@@ -153,15 +164,21 @@ pnpm release            # on clean main
 ```
 
 `changeset version` bumps the plugin's private `package.json`; `scripts/sync-versions.mjs` copies
-that version into `.claude-plugin/plugin.json` and the marketplace entry; `scripts/release-tags.mjs`
-then runs `claude plugin tag`, which refuses to tag unless those two agree.
+that version into `.claude-plugin/plugin.json`; `scripts/release-tags.mjs` then tags it with
+`claude plugin tag`. Each plugin has its own version, changelog (`plugins/<name>/CHANGELOG.md`) and
+`<name>--v<version>` tag, and a changeset bumps only the plugins it names.
+
+Leave `version` out of the plugin's marketplace entry. Claude Code reads `plugin.json` first, so a
+version there is ignored at install time, can only go stale, and makes `claude plugin tag` refuse to
+tag once it does.
 
 Full steps and the reasoning in [the release how-to](../how-to.md#release-a-new-version).
 
-A plugin needs no publish step: the marketplace is this git repository, so merging to `main` is what
-ships it. Consumers pick it up with `claude plugin update <name>`, or automatically if their
-marketplace auto-updates. Updates apply on restart. The version and tag matter for dependency ranges
-(`ts-base@^1.2.0`) and for `git-subdir` pinning.
+Merging a plugin change to `main` does not ship it. Claude Code compares the version in
+`plugin.json` with the installed one, so users get the change once the release PR bumps that version
+— with `claude plugin update <name>`, or automatically if they turned on auto-update for this
+marketplace, which is off by default. Updates apply on restart or `/reload-plugins`. See
+[what a plugin release actually ships](../how-to.md#what-a-plugin-release-actually-ships).
 
 ## Rename a plugin
 

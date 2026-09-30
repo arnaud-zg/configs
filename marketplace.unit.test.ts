@@ -41,8 +41,9 @@ describe("a plugin added to the marketplace", () => {
   });
 
   test("carries the same version in package.json and plugin.json", () => {
-    // `claude plugin tag` refuses to tag when these disagree; scripts/sync-versions.mjs keeps them
-    // in step during `pnpm release:version`. A mismatch means the sync step was skipped.
+    // Changesets bumps package.json and writes the changelog against it; Claude Code installs and
+    // `claude plugin tag` tags whatever plugin.json says. scripts/sync-versions.mjs copies one into
+    // the other during `pnpm release:version`, so a mismatch means the sync step was skipped.
     for (const name of pluginDirs) {
       const pkg = readJson(path.join(pluginsDir, name, "package.json"));
       const manifest = readJson(path.join(pluginsDir, name, ".claude-plugin", "plugin.json"));
@@ -52,6 +53,14 @@ describe("a plugin added to the marketplace", () => {
 
   test("is listed in the marketplace catalogue, and nothing is listed that isn't there", () => {
     expect([...pluginDirs].sort()).toEqual([...marketplace.plugins.map((p) => p.name)].sort());
+  });
+
+  test("keeps its version out of the catalogue entry, so plugin.json is the only place it lives", () => {
+    // Claude Code reads plugin.json's version before the entry's, so a version here is ignored at
+    // install time and can only go stale — and a stale one makes `claude plugin tag` refuse to tag.
+    for (const entry of marketplace.plugins) {
+      expect(entry, `marketplace entry ${entry.name} has a version`).not.toHaveProperty("version");
+    }
   });
 });
 

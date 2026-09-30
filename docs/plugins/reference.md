@@ -47,17 +47,17 @@ At the repository root, in `.claude-plugin/`.
 
 ### Catalogue entry
 
-| Field         | Notes                                                                                                                |
-| ------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `name`        | Required. Must match the plugin's own `name`.                                                                        |
-| `source`      | Required. See below.                                                                                                 |
-| `description` | Shown in `/plugin` browse and search. This is the discovery text — write it for a human deciding whether to install. |
-| `author`      | `{ name, email?, url? }`                                                                                             |
-| `category`    | e.g. `development`, `security`, `productivity`                                                                       |
-| `homepage`    | Documentation URL                                                                                                    |
-| `tags`        | string[]                                                                                                             |
-| `version`     | Optional; must agree with `plugin.json` (`claude plugin tag` enforces this)                                          |
-| `strict`      | Stricter manifest validation for this entry                                                                          |
+| Field         | Notes                                                                                                                                                         |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`        | Required. Must match the plugin's own `name`.                                                                                                                 |
+| `source`      | Required. See below.                                                                                                                                          |
+| `description` | Shown in `/plugin` browse and search. This is the discovery text — write it for a human deciding whether to install.                                          |
+| `author`      | `{ name, email?, url? }`                                                                                                                                      |
+| `category`    | e.g. `development`, `security`, `productivity`                                                                                                                |
+| `homepage`    | Documentation URL                                                                                                                                             |
+| `tags`        | string[]                                                                                                                                                      |
+| `version`     | Leave it out. `plugin.json`'s version wins at install time, and `claude plugin tag` refuses to tag when they disagree. `marketplace.unit.test.ts` rejects it. |
+| `strict`      | Stricter manifest validation for this entry                                                                                                                   |
 
 ### `source` forms
 
@@ -84,7 +84,7 @@ In the plugin's `.claude-plugin/` directory.
 | ---------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`           | string, required | Unique id, used for namespacing. Kebab-case, no spaces.                                                                                                                                     |
 | `displayName`    | string           | Human-readable name shown in the UI; may contain spaces and casing. Not used for lookup.                                                                                                    |
-| `version`        | string           | Semver. Required in practice if anything depends on you.                                                                                                                                    |
+| `version`        | string           | Semver. Claude Code compares it with the installed version to decide whether an update exists: until it changes, users keep their cached copy. Set by the release flow here, never by hand. |
 | `description`    | string           | User-facing explanation of what the plugin provides                                                                                                                                         |
 | `author`         | object           | `{ name, email?, url? }`                                                                                                                                                                    |
 | `homepage`       | string (URL)     |                                                                                                                                                                                             |
@@ -127,7 +127,9 @@ only to point somewhere non-standard, and **their override semantics differ**:
 single skill with `SKILL.md` at its top level.
 
 `${CLAUDE_PLUGIN_ROOT}` expands to the installed plugin directory. Use it in every hook command and
-script path — never a relative or hard-coded path.
+script path — never a relative or hard-coded path — and quote it, since the expanded path can
+contain spaces: `"command": "\"${CLAUDE_PLUGIN_ROOT}/hooks-handlers/x.sh\""`.
+`claude plugin validate --strict` fails on an unquoted one.
 
 ## `SKILL.md` frontmatter
 

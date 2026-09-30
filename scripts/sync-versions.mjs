@@ -4,8 +4,9 @@
  * Changesets owns `package.json` versions and changelogs. It knows nothing about the two other
  * places a version has to appear in this repository:
  *
- *   - each plugin's `.claude-plugin/plugin.json`, and that plugin's entry in the marketplace
- *     catalogue — `claude plugin tag` refuses to tag when the two disagree;
+ *   - each plugin's `.claude-plugin/plugin.json`, the version Claude Code installs and
+ *     `claude plugin tag` tags. Marketplace entries carry no version — plugin.json would override
+ *     it anyway — so there is nothing to sync into the catalogue;
  *   - the pinned `@arnaud-zg/configs@x.y.z` install examples in the docs, so they never recommend
  *     a version older than the one being released.
  *
@@ -35,11 +36,8 @@ for (const file of ["README.md", "docs/tutorial.md"]) {
   }
 }
 
-// 2. Each plugin's package.json version, into its plugin manifest and marketplace entry.
+// 2. Each plugin's package.json version, into its plugin manifest.
 const pluginsDir = path.join(root, "plugins");
-const marketplacePath = path.join(root, ".claude-plugin", "marketplace.json");
-const marketplace = readJson(marketplacePath);
-let marketplaceChanged = false;
 
 const pluginDirs = readdirSync(pluginsDir, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())
@@ -63,15 +61,6 @@ for (const name of pluginDirs) {
     writeJson(manifestPath, manifest);
     changed.push(`plugins/${name}/.claude-plugin/plugin.json → ${version}`);
   }
-
-  const entry = marketplace.plugins.find((plugin) => plugin.name === manifest.name);
-  if (entry && "version" in entry && entry.version !== version) {
-    entry.version = version;
-    marketplaceChanged = true;
-    changed.push(`marketplace entry ${manifest.name} → ${version}`);
-  }
 }
-
-if (marketplaceChanged) writeJson(marketplacePath, marketplace);
 
 console.info(changed.length ? changed.map((line) => `  ${line}`).join("\n") : "  nothing to sync");
