@@ -153,6 +153,25 @@ This scaffolds `~/.claude/skills/<name>/`, which auto-loads next session as `<na
 marketplace, no install, no version. Iterate there, then move the directory into `plugins/` when it
 is worth publishing.
 
+## Evaluate a skill
+
+```sh
+claude plugin eval init --bare <case>   # blank case under the plugin's evals/
+claude plugin eval <name>               # scored run
+claude plugin details <name>            # inventory + projected token cost
+```
+
+A case is a directory under `evals/` inside the plugin. `prompt.md` is the prompt to send, with
+`max_turns` and `allowed_tools` in its frontmatter. Each `graders/*.md` is one grading criterion,
+with `type: llm` and a `weight` in its frontmatter. Start from the two or three prompts that should
+trigger the skill.
+
+By default every case also runs without the plugin, and the report shows the score difference, so
+you can tell whether the skill changes anything. Results land in `evals/results/<timestamp>/`; don't
+commit them.
+
+Evals run on your machine, as you. Only evaluate plugins you trust.
+
 ## Release a version
 
 Plugins release through the same flow as the npm package — there is only one:

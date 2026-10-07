@@ -11,6 +11,12 @@ commands. Key constraint: `main` is protected by a Lefthook hook, so the version
 a branch and go through a PR before tagging and `pnpm publish`. Don't try to bump/commit/tag
 directly on `main`.
 
+## Plugins and skills
+
+To add or change a plugin or skill, follow [docs/plugins/how-to.md](./docs/plugins/how-to.md). Draft
+in `~/.claude/skills/<name>/`, evaluate, then move it into `plugins/`. Run
+`claude plugin validate . --strict` before committing.
+
 ## Before committing
 
 Run `pnpm typecheck && pnpm lint && pnpm lint:md && pnpm format:check && pnpm test`. All five must
