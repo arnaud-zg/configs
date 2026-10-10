@@ -44,8 +44,8 @@ describe("a well-built skill", () => {
 
   test("every finding names the skill it is in and how to fix it", () => {
     const [finding] = inspectShelf(shelfOf({ tidy: { "SKILL.md": entry("messy") } }), {});
-    expect(finding?.skill).toBe("tidy");
-    expect(finding?.fix).toBe("set name: tidy");
+    expect(finding.skill).toBe("tidy");
+    expect(finding.fix).toBe("set name: tidy");
   });
 });
 
@@ -69,7 +69,7 @@ describe("named: a skill is found and loaded by its name and its description", (
 
   test("given a folder name with capitals, then it is flagged as not lowercase words joined by hyphens", () => {
     const [finding] = findingsOf({ Tidy_Up: { "SKILL.md": entry("Tidy_Up") } });
-    expect(finding?.message).toMatch(/lowercase words joined by hyphens/);
+    expect(finding.message).toMatch(/lowercase words joined by hyphens/);
   });
 
   test("given a description that never says when to use the skill, then it is flagged", () => {
@@ -86,7 +86,7 @@ describe("named: a skill is found and loaded by its name and its description", (
 
   test("given no description at all, then it is flagged", () => {
     const [finding] = findingsOf({ tidy: { "SKILL.md": "---\nname: tidy\n---\n# Tidy\n" } });
-    expect(finding?.message).toBe("the entry has no description");
+    expect(finding.message).toBe("the entry has no description");
   });
 
   test("given a description folded over several lines, then all of it is read", () => {
@@ -102,7 +102,7 @@ describe("named: a skill is found and loaded by its name and its description", (
   test("given a description longer than the 1024 characters a host keeps, then it is flagged", () => {
     const long = `Use when asked. ${"x".repeat(1024)}`;
     const [finding] = findingsOf({ tidy: { "SKILL.md": entry("tidy", "", long) } });
-    expect(finding?.message).toBe("the description is 1040 characters, over 1024");
+    expect(finding.message).toBe("the description is 1040 characters, over 1024");
   });
 });
 
@@ -168,7 +168,7 @@ describe("resolves: a pointer to nothing sends the model nowhere", () => {
   });
 
   test("given a link to a folder of the skill, then the folder is enough", () => {
-    const skill = { "SKILL.md": entry("tidy", "[scripts](scripts/)\n"), "scripts/a.sh": "" };
+    const skill = { "SKILL.md": entry("tidy", "[assets](assets/)\n"), "assets/logo.svg": "" };
     expect(findingsOf({ tidy: skill })).toEqual([]);
   });
 
@@ -261,6 +261,11 @@ describe("resolves: a pointer to nothing sends the model nowhere", () => {
       "scripts/a.mjs": "",
       "scripts/a.test.mjs": 'import "./a.mjs";',
     };
+    expect(findingsOf({ tidy: skill })).toEqual([]);
+  });
+
+  test("given an example link written as inline code, then it is not read as a pointer", () => {
+    const skill = { "SKILL.md": entry("tidy", "Link like `[the guide](guide.md#steps)`.\n") };
     expect(findingsOf({ tidy: skill })).toEqual([]);
   });
 
