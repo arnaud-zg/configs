@@ -4,6 +4,9 @@ description:
   TODO — describe WHEN Claude should reach for this, not what it is. Include the phrases a user
   would actually type ("review my migrations", "set up tracing"). This string is the only thing
   Claude matches against, so be concrete and specific.
+# Keeps this template out of `npx skills add` listings. Delete these two lines when you copy it.
+metadata:
+  internal: true
 ---
 
 # Example skill
