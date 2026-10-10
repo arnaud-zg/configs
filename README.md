@@ -66,14 +66,22 @@ This repository is also a [Claude Code](https://claude.com/claude-code) plugin m
 catalogue of skills, subagents, hooks and MCP servers that install with a version and uninstall
 cleanly, instead of being copy-pasted into `~/.claude/`.
 
+| Plugin                                             | What it does                                                                                                                |
+| -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| [skill-builder](./plugins/skill-builder/README.md) | Write Agent Skills, and check them against four rules: named, small, resolves, tested. File, line and fix for each finding. |
+
+Install one in Claude Code, or in any agent through the
+[skills CLI](https://github.com/vercel-labs/skills):
+
 ```sh
-/plugin marketplace add arnaud-zg/configs
-/plugin install <plugin>@arnaud-zg
+/plugin install skill-builder --marketplace arnaud-zg/configs
+npx skills add arnaud-zg/configs --skill skill-builder
 ```
 
-The catalogue is **empty for now** — `.claude-plugin/marketplace.json` lists no plugins, and
-`templates/plugin-template/` is the starting point to add one. None of this ships in the npm
-package: the marketplace is consumed with `git clone`, the configs with `pnpm add`.
+Each plugin's README shows how to pin the version you reviewed, and how to give it to a whole team
+from `.claude/settings.json`. `templates/plugin-template/` is the starting point to add a plugin.
+None of this ships in the npm package: the marketplace is consumed with `git clone`, the configs
+with `pnpm add`.
 
 The same warning as above applies, more sharply: a plugin's hooks run shell commands on your machine
 and its MCP servers talk to remote endpoints, with no sandbox. Read `hooks/`, `.mcp.json` and

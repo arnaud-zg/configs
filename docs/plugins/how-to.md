@@ -13,10 +13,12 @@ cp -R templates/plugin-template plugins/<name>
    and never published — it exists so changesets can version the plugin. See
    [why](../how-to.md#why-plugins-carry-a-packagejson).
 3. Delete the component directories the plugin does not use.
-4. Add an entry to `.claude-plugin/marketplace.json` with `"source": "<name>"` and no `version` —
+4. Delete the two `metadata: internal: true` lines from each copied `SKILL.md`. They keep the
+   template out of `npx skills add` listings, and would hide your skill the same way.
+5. Add an entry to `.claude-plugin/marketplace.json` with `"source": "<name>"` and no `version` —
    `plugin.json` carries it.
-5. `claude plugin validate . --strict`
-6. `pnpm test` — `marketplace.unit.test.ts` fails if the package name, the manifest name and the
+6. `claude plugin validate . --strict`
+7. `pnpm test` — `marketplace.unit.test.ts` fails if the package name, the manifest name and the
    directory disagree, if the versions drift apart, if the catalogue entry carries a version, or if
    the plugin is missing from the catalogue. Those are the steps that are easy to skip when copying
    the template.
