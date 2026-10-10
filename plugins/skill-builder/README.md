@@ -28,6 +28,12 @@ or in two, pinned to the version you reviewed:
 npx skills add arnaud-zg/configs --skill skill-builder
 ```
 
+or pinned, through the release's tag:
+
+```sh
+npx skills add https://github.com/arnaud-zg/configs/tree/skill-builder--v0.1.0 --skill skill-builder
+```
+
 **A whole team**, from the project's `.claude/settings.json`. Everyone who trusts the folder gets
 the marketplace, and the plugin turns on at their next session:
 
