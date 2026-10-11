@@ -9,5 +9,13 @@
   "metadata": {
     "pluginRoot": "./plugins"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "skill-builder",
+      "source": "skill-builder",
+      "description": "Write Agent Skills, and check them against four rules a script can hold: named, small, resolves, tested. Every finding comes with its file, line and fix.",
+      "category": "development",
+      "tags": ["skills", "lint", "authoring"]
+    }
+  ]
 }
