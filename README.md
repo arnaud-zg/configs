@@ -8,7 +8,7 @@ I built this to stop copy-pasting the same ESLint/Prettier/tsconfig/Lefthook set
 my projects.
 
 ```sh
-pnpm add -D @arnaud-zg/configs@0.3.0
+pnpm add -D @arnaud-zg/configs@0.3.1
 ```
 
 Always pin the exact version above (not a range like `^x.y.z`, and not `latest`), so an update to
