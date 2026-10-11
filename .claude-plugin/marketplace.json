@@ -11,8 +11,8 @@
   },
   "plugins": [
     {
-      "name": "skill-builder",
-      "source": "skill-builder",
+      "name": "hexagonal-skill-builder",
+      "source": "hexagonal-skill-builder",
       "description": "Write Agent Skills, and check them against four rules a script can hold: named, small, resolves, tested. Every finding comes with its file, line and fix.",
       "category": "development",
       "tags": ["skills", "lint", "authoring"]

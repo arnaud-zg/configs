@@ -62,11 +62,33 @@ describe("a plugin added to the marketplace", () => {
       expect(entry, `marketplace entry ${entry.name} has a version`).not.toHaveProperty("version");
     }
   });
+
+  test("is released through changesets: it has a changelog, or waits at 0.0.0 for a changeset", () => {
+    // A plugin's first version comes from `pnpm release:version` like every later one, so it gets a
+    // changelog and its GitHub release gets real notes. Until then it sits at 0.0.0, which
+    // `pnpm release` never tags, and a pending changeset names it so the next release PR versions it.
+    const pending = readdirSync(path.join(root, ".changeset"))
+      .filter((file) => file.endsWith(".md") && file !== "README.md")
+      .map((file) => readFileSync(path.join(root, ".changeset", file), "utf8"));
+    for (const name of pluginDirs) {
+      if (existsSync(path.join(pluginsDir, name, "CHANGELOG.md"))) continue;
+      const pkg = readJson(path.join(pluginsDir, name, "package.json"));
+      expect(pkg.version, `plugins/${name} has no changelog, so it is unreleased`).toBe("0.0.0");
+      const named = pending.some((text) => text.includes(`"${pkg.name}":`));
+      expect(named, `no pending changeset names ${pkg.name}`).toBe(true);
+    }
+  });
 });
 
 describe("the plugin template", () => {
   test("stays outside plugins/, so it is never versioned, tagged or listed", () => {
     expect(pluginDirs).not.toContain("plugin-template");
     expect(existsSync(path.join(root, "templates", "plugin-template", "package.json"))).toBe(true);
+  });
+
+  test("starts at 0.0.0, so a plugin copied from it waits for its first changeset", () => {
+    const template = path.join(root, "templates", "plugin-template");
+    expect(readJson(path.join(template, "package.json")).version).toBe("0.0.0");
+    expect(readJson(path.join(template, ".claude-plugin", "plugin.json")).version).toBe("0.0.0");
   });
 });

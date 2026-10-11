@@ -18,7 +18,7 @@ afterEach(() => {
 
 /** A temporary project holding these files, by path from its root. */
 function projectWith(files: Record<string, string>) {
-  project = mkdtempSync(path.join(os.tmpdir(), "skill-builder-check-"));
+  project = mkdtempSync(path.join(os.tmpdir(), "hexagonal-skill-builder-check-"));
   for (const [relative, text] of Object.entries(files)) {
     mkdirSync(path.dirname(path.join(project, relative)), { recursive: true });
     writeFileSync(path.join(project, relative), text);

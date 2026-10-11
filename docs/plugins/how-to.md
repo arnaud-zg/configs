@@ -17,11 +17,13 @@ cp -R templates/plugin-template plugins/<name>
    template out of `npx skills add` listings, and would hide your skill the same way.
 5. Add an entry to `.claude-plugin/marketplace.json` with `"source": "<name>"` and no `version` —
    `plugin.json` carries it.
-6. `claude plugin validate . --strict`
-7. `pnpm test` — `marketplace.unit.test.ts` fails if the package name, the manifest name and the
-   directory disagree, if the versions drift apart, if the catalogue entry carries a version, or if
-   the plugin is missing from the catalogue. Those are the steps that are easy to skip when copying
-   the template.
+6. `pnpm changeset`: pick `@arnaud-zg/plugin-<name>`, `minor`, and say what the plugin does. The
+   plugin stays at `0.0.0` until the next release PR gives it `0.1.0` and its first changelog entry.
+7. `claude plugin validate . --strict`
+8. `pnpm test` — `marketplace.unit.test.ts` fails if the package name, the manifest name and the
+   directory disagree, if the versions drift apart, if the catalogue entry carries a version, if the
+   plugin is missing from the catalogue, or if it has no changelog and no pending changeset. Those
+   are the steps that are easy to skip when copying the template.
 
 ## Add a skill to an existing plugin
 
@@ -190,8 +192,11 @@ pnpm release            # after the merge: tags and creates the GitHub release
 changelog (`plugins/<name>/CHANGELOG.md`) and `<name>--v<version>` tag, and a changeset bumps only
 the plugins it names.
 
-A new plugin needs no changeset for its first version: once it is on `main`, `pnpm release` releases
-the version it starts with.
+A new plugin starts at `0.0.0` and gets its first version from a changeset too, so it has a
+changelog from day one and its first GitHub release has real notes. Add the changeset in the PR that
+adds the plugin (`pnpm changeset`, pick the plugin, `minor` for `0.1.0`). `pnpm release` never tags
+a `0.0.0`, and `marketplace.unit.test.ts` fails on a plugin with no changelog and no pending
+changeset.
 
 Leave `version` out of the plugin's marketplace entry. Claude Code reads `plugin.json` first, so a
 version there is ignored at install time, can only go stale, and makes `claude plugin tag` refuse to

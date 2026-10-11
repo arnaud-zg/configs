@@ -1,5 +1,5 @@
 ---
-name: skill-builder
+name: hexagonal-skill-builder
 description:
   Writes Agent Skills and checks them against four rules a script can hold (named, small, resolves,
   tested), printing the file, line and fix for anything that breaks one, plus seven guards for what
@@ -9,7 +9,7 @@ argument-hint: "[check|create] [<path or name>]"
 allowed-tools: Bash(node ${CLAUDE_SKILL_DIR}/scripts/check.mjs *)
 ---
 
-# Skill Builder
+# Hexagonal Skill Builder
 
 **A skill is read by a model that does what it says, so the shape of a skill is its behaviour.**
 Four rules hold that shape, and a script checks them. Everything else is the author's judgement, and
@@ -51,13 +51,17 @@ A clean check says nothing about the guards.
 2. **The entry routes, it does not teach.** `SKILL.md` says what the skill is for and which page to
    read when. Anything it can do without goes in its own page, linked from the entry and read only
    when needed (why: E-01).
-3. **Link with relative Markdown links**, such as `[the guide](guide.md#steps)`, and run scripts
+3. **One page per job, by layer when it helps.** The hexagonal habit: the entry is the port, and
+   behind it `verbs/` for what Claude does, `domain/` for what stays true, and `adapters/` for the
+   tools it touches, with `scripts/` beside them. A habit worth keeping, not a rule: put a page
+   where its reader will look for it (why: E-09).
+4. **Link with relative Markdown links**, such as `[the guide](guide.md#steps)`, and run scripts
    through `${CLAUDE_SKILL_DIR}`. The check can follow both.
-4. **A script comes with its test**, in the same change. If the project has a suite, the test goes
+5. **A script comes with its test**, in the same change. If the project has a suite, the test goes
    into it as well.
-5. **Say each thing once.** A rule restated in three pages drifts in two of them.
-6. **Read [guards.md](guards.md) before writing a number, an output or an edit script.**
-7. **Write a README.md beside the entry if people will install it.** The entry is followed as
+6. **Say each thing once.** A rule restated in three pages drifts in two of them.
+7. **Read [guards.md](guards.md) before writing a number, an output or an edit script.**
+8. **Write a README.md beside the entry if people will install it.** The entry is followed as
    instructions, so it is no place for a pitch (why: E-08).
 
 Then run the check.
