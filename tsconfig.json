@@ -19,9 +19,9 @@
     "internal/peer-requirement.value-object.mjs",
     "internal/resolve-installed-package.mjs",
     "internal/subpath-peer-registry.mjs",
-    "plugins/skill-builder/skills/skill-builder/scripts/check.mjs",
-    "plugins/skill-builder/skills/skill-builder/scripts/rules.mjs",
-    "plugins/skill-builder/skills/skill-builder/scripts/shelf.mjs",
+    "plugins/hexagonal-skill-builder/skills/hexagonal-skill-builder/scripts/check.mjs",
+    "plugins/hexagonal-skill-builder/skills/hexagonal-skill-builder/scripts/rules.mjs",
+    "plugins/hexagonal-skill-builder/skills/hexagonal-skill-builder/scripts/shelf.mjs",
     "prettier/index.js",
     "remark/index.mjs",
     "tsdown/base.ts"

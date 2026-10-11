@@ -3,11 +3,14 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, test } from "vitest";
 
-// The skills this marketplace ships are held to the rules its own skill-builder checks, by the
+// The skills this marketplace ships are held to the rules its own hexagonal-skill-builder checks, by the
 // same script a person runs, so the shelf never asks of others what it does not do itself.
 
 const root = import.meta.dirname;
-const check = path.join(root, "plugins/skill-builder/skills/skill-builder/scripts/check.mjs");
+const check = path.join(
+  root,
+  "plugins/hexagonal-skill-builder/skills/hexagonal-skill-builder/scripts/check.mjs",
+);
 
 function run(...args: string[]) {
   return spawnSync(process.execPath, [check, ...args], { cwd: root, encoding: "utf8" });

@@ -39,13 +39,13 @@ Checking one skill still reads its neighbours, so a link like `../other-skill/SK
 The check exits `1` on any finding. Copy the skill into the project once, so CI needs no network:
 
 ```sh
-npx skills add arnaud-zg/configs --skill skill-builder -a claude-code -y --copy
+npx skills add arnaud-zg/configs --skill hexagonal-skill-builder -a claude-code -y --copy
 ```
 
 Then run it in a job:
 
 ```yaml
-- run: node .claude/skills/skill-builder/scripts/check.mjs
+- run: node .claude/skills/hexagonal-skill-builder/scripts/check.mjs
 ```
 
 or before each commit, with Lefthook:
@@ -55,7 +55,7 @@ pre-commit:
   commands:
     skills:
       glob: ".claude/skills/**"
-      run: node .claude/skills/skill-builder/scripts/check.mjs
+      run: node .claude/skills/hexagonal-skill-builder/scripts/check.mjs
 ```
 
 ## Make sure every test actually runs

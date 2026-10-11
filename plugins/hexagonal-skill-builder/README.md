@@ -1,4 +1,4 @@
-# skill-builder
+# hexagonal-skill-builder
 
 Write [Agent Skills](https://code.claude.com/docs/en/skills) that do what they say, and check them
 against four rules a script can hold. Every finding comes with its file, its line and its fix.
@@ -29,26 +29,26 @@ flowchart LR
 **Claude Code**, in one step (Claude Code 2.1.275 or later):
 
 ```sh
-/plugin install skill-builder --marketplace arnaud-zg/configs
+/plugin install hexagonal-skill-builder --marketplace arnaud-zg/configs
 ```
 
 or in two, pinned to the version you reviewed:
 
 ```sh
-/plugin marketplace add arnaud-zg/configs#skill-builder--v0.1.0
-/plugin install skill-builder@arnaud-zg
+/plugin marketplace add arnaud-zg/configs#hexagonal-skill-builder--v0.1.0
+/plugin install hexagonal-skill-builder@arnaud-zg
 ```
 
 **Any agent**, with the [skills CLI](https://github.com/vercel-labs/skills):
 
 ```sh
-npx skills add arnaud-zg/configs --skill skill-builder
+npx skills add arnaud-zg/configs --skill hexagonal-skill-builder
 ```
 
 or pinned, through the release's tag:
 
 ```sh
-npx skills add https://github.com/arnaud-zg/configs/tree/skill-builder--v0.1.0 --skill skill-builder
+npx skills add https://github.com/arnaud-zg/configs/tree/hexagonal-skill-builder--v0.1.0 --skill hexagonal-skill-builder
 ```
 
 **A whole team**, from the project's `.claude/settings.json`. Everyone who trusts the folder gets
@@ -58,18 +58,22 @@ the marketplace, and the plugin turns on at their next session:
 {
   "extraKnownMarketplaces": {
     "arnaud-zg": {
-      "source": { "source": "github", "repo": "arnaud-zg/configs", "ref": "skill-builder--v0.1.0" }
+      "source": {
+        "source": "github",
+        "repo": "arnaud-zg/configs",
+        "ref": "hexagonal-skill-builder--v0.1.0"
+      }
     }
   },
-  "enabledPlugins": { "skill-builder@arnaud-zg": true }
+  "enabledPlugins": { "hexagonal-skill-builder@arnaud-zg": true }
 }
 ```
 
 ## Use it
 
 Ask Claude to _check the skills_, or to _create a skill_ for something, and the skill fires on its
-own. To call it by name, use `/skill-builder:skill-builder check` (from the plugin) or
-`/skill-builder check` (from the skills CLI).
+own. To call it by name, use `/hexagonal-skill-builder:hexagonal-skill-builder check` (from the
+plugin) or `/hexagonal-skill-builder check` (from the skills CLI).
 
 The check is a Node script, and runs without Claude too:
 
@@ -108,8 +112,8 @@ gate a commit hook or a CI job as it is.
 | `tested`   | every script under `scripts/` is reached by a test; with `--suite`, every test is in it |
 
 Each one is there because a skill once broke it and a model followed it anyway. The stories are in
-[`evidence.md`](skills/skill-builder/evidence.md), and seven mistakes no script can see are in
-[`guards.md`](skills/skill-builder/guards.md).
+[`evidence.md`](skills/hexagonal-skill-builder/evidence.md), and seven mistakes no script can see
+are in [`guards.md`](skills/hexagonal-skill-builder/guards.md).
 
 ## 🔒 Know what you're installing
 
@@ -119,5 +123,6 @@ Each one is there because a skill once broke it and a model followed it anyway. 
 - **It pre-approves one command**: `node ${CLAUDE_SKILL_DIR}/scripts/check.mjs`, through the skill's
   `allowed-tools`, so the check runs without a permission prompt. Everything else asks.
 
-Read [`SKILL.md`](skills/skill-builder/SKILL.md) and [`scripts/`](skills/skill-builder/scripts/)
-before you install it, as you would any dependency. Claude reads `SKILL.md`, not this page.
+Read [`SKILL.md`](skills/hexagonal-skill-builder/SKILL.md) and
+[`scripts/`](skills/hexagonal-skill-builder/scripts/) before you install it, as you would any
+dependency. Claude reads `SKILL.md`, not this page.

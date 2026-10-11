@@ -42,6 +42,24 @@ What a script cannot see is written down instead, as seven guards with the story
 clean check says nothing about them, which is why the skill tells Claude to read them before writing
 a number, an output or an edit script.
 
+## Why "hexagonal"
+
+The name comes from hexagonal architecture, where a core talks to the world only through ports. A
+skill can be built the same way: the entry is the one port, and every page behind it has one job.
+
+```mermaid
+flowchart LR
+  D["description"] --> E(["SKILL.md<br/>the port: routes"])
+  E --> V["verbs/<br/>what Claude does"]
+  E --> M["domain/<br/>what stays true"]
+  E --> A["adapters/<br/>the tools it touches"]
+  V -.-> S["scripts/"]
+```
+
+The first version enforced that layout as rules. They went, for the reasons above, and the layout
+stayed as a habit the guide suggests: it keeps the entry short and each page easy to find, but a
+skill that puts its pages elsewhere is just as sound.
+
 ## Every rule has a story
 
 The skill's `evidence.md` holds one story per rule and guard: a real failure, and what it cost. The
