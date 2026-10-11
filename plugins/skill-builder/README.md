@@ -7,6 +7,23 @@ A skill is a set of instructions a model follows to the letter, so how it is org
 behaves. A link to a page that moved sends it nowhere, a long entry is paid for on every call, and a
 script nobody tests was only ever watched.
 
+## 📚 Documentation
+
+- 🚀 **[Tutorial](docs/tutorial.md)**: your first skill, checked, in ten minutes.
+- 🛠️ **[How-to guides](docs/how-to.md)**: check one skill, fail a build, require tests, read the
+  JSON, split a long entry.
+- 📖 **[Reference](docs/reference.md)**: the command, its exit codes, and exactly what each rule
+  looks for.
+- 💡 **[Explanation](docs/explanation.md)**: why a skill's shape is its behaviour, and why four
+  rules.
+
+```mermaid
+flowchart LR
+  W["write a skill"] --> C["check"]
+  C -->|"✗ file:line → fix"| F["fix"] --> C
+  C -->|"✓"| S["ship it"]
+```
+
 ## Install
 
 **Claude Code**, in one step (Claude Code 2.1.275 or later):
