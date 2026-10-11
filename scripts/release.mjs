@@ -29,11 +29,10 @@ import {
 
 startFromMain();
 
-// The section changesets wrote for this version. A plugin with no CHANGELOG.md yet is on the version
-// it was created with, which no changeset produced.
+// The section changesets wrote for this version.
 const changelogSection = (dir, version) => {
   const file = path.join(root, dir, "CHANGELOG.md");
-  if (!existsSync(file)) return "First release.";
+  if (!existsSync(file)) return undefined;
   return readFileSync(file, "utf8").split(`\n## ${version}\n`)[1]?.split("\n## ")[0]?.trim();
 };
 
@@ -48,11 +47,15 @@ const released = new Set(
 const { version } = readJson("package.json");
 const releases = [
   { tag: `v${version}`, notes: changelogSection(".", version) },
-  ...plugins().map((plugin) => ({
-    tag: `${plugin.name}--v${plugin.version}`,
-    notes: changelogSection(plugin.dir, plugin.version),
-    plugin,
-  })),
+  // A plugin at 0.0.0 has never been versioned: its first version comes from a changeset, through
+  // `pnpm release:version`, like every later one. Until then there is nothing to release.
+  ...plugins()
+    .filter((plugin) => plugin.version !== "0.0.0")
+    .map((plugin) => ({
+      tag: `${plugin.name}--v${plugin.version}`,
+      notes: changelogSection(plugin.dir, plugin.version),
+      plugin,
+    })),
 ].filter((release) => !released.has(release.tag));
 
 if (releases.length === 0) {

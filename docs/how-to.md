@@ -222,12 +222,13 @@ pnpm release
 ```
 
 It switches to an up-to-date `main` and works out what is new by itself: every current version — the
-package's and each plugin's — that has no GitHub release yet. For each one:
+package's and each plugin's — that has no GitHub release yet. A plugin still at `0.0.0` has not been
+versioned yet and is skipped. For each one:
 
-| Artifact             | npm                                                       | Tag                                                                        | GitHub release notes                                              |
-| -------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `@arnaud-zg/configs` | published by `changeset publish`                          | `v0.3.1`, annotated with its changelog section                             | its section of `CHANGELOG.md`                                     |
-| each plugin          | none — see [below](#what-a-plugin-release-actually-ships) | `<name>--v0.2.0`, by `claude plugin tag`, which validates the plugin first | its section of `plugins/<name>/CHANGELOG.md`, or "First release." |
+| Artifact             | npm                                                       | Tag                                                                        | GitHub release notes                         |
+| -------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------- |
+| `@arnaud-zg/configs` | published by `changeset publish`                          | `v0.3.1`, annotated with its changelog section                             | its section of `CHANGELOG.md`                |
+| each plugin          | none — see [below](#what-a-plugin-release-actually-ships) | `<name>--v0.2.0`, by `claude plugin tag`, which validates the plugin first | its section of `plugins/<name>/CHANGELOG.md` |
 
 The tags are pushed, then the GitHub releases created. A plugin's release is never marked "Latest",
 so the package's keeps that spot on the repository page.
