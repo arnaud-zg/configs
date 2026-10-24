@@ -29,14 +29,14 @@ flowchart LR
 **Claude Code**, in one step (Claude Code 2.1.275 or later):
 
 ```sh
-/plugin install hexagonal-skill-builder --marketplace arnaud-zg/configs
+/plugin install arnaud-zg --marketplace arnaud-zg/configs
 ```
 
 or in two, pinned to the version you reviewed:
 
 ```sh
-/plugin marketplace add arnaud-zg/configs#hexagonal-skill-builder--v0.1.0
-/plugin install hexagonal-skill-builder@arnaud-zg
+/plugin marketplace add arnaud-zg/configs#arnaud-zg--v0.2.0
+/plugin install arnaud-zg@arnaud-zg
 ```
 
 **Any agent**, with the [skills CLI](https://github.com/vercel-labs/skills):
@@ -48,7 +48,7 @@ npx skills add arnaud-zg/configs --skill hexagonal-skill-builder
 or pinned, through the release's tag:
 
 ```sh
-npx skills add https://github.com/arnaud-zg/configs/tree/hexagonal-skill-builder--v0.1.0 --skill hexagonal-skill-builder
+npx skills add https://github.com/arnaud-zg/configs/tree/arnaud-zg--v0.2.0 --skill hexagonal-skill-builder
 ```
 
 **A whole team**, from the project's `.claude/settings.json`. Everyone who trusts the folder gets
@@ -61,18 +61,18 @@ the marketplace, and the plugin turns on at their next session:
       "source": {
         "source": "github",
         "repo": "arnaud-zg/configs",
-        "ref": "hexagonal-skill-builder--v0.1.0"
+        "ref": "arnaud-zg--v0.2.0"
       }
     }
   },
-  "enabledPlugins": { "hexagonal-skill-builder@arnaud-zg": true }
+  "enabledPlugins": { "arnaud-zg@arnaud-zg": true }
 }
 ```
 
 ## Use it
 
 Ask Claude to _check the skills_, or to _create a skill_ for something, and the skill fires on its
-own. To call it by name, use `/hexagonal-skill-builder:hexagonal-skill-builder check` (from the
+own. To call it by name, use `/arnaud-zg:hexagonal-skill-builder check` (from the `arnaud-zg`
 plugin) or `/hexagonal-skill-builder check` (from the skills CLI).
 
 The check is a Node script, and runs without Claude too:

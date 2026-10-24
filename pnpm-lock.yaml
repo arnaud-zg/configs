@@ -81,7 +81,7 @@ importers:
         specifier: ^3.0.0
         version: 3.2.7(@types/debug@4.1.13)(@types/node@22.20.1)(jiti@2.6.1)(yaml@2.9.0)
 
-  plugins/hexagonal-skill-builder: {}
+  plugins/arnaud-zg: {}
 
 packages:
 

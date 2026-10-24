@@ -1,9 +1,9 @@
 {
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
-  "name": "hexagonal-skill-builder",
-  "displayName": "Hexagonal Skill Builder",
+  "name": "arnaud-zg",
+  "displayName": "Arnaud Zheng's skills",
   "version": "0.1.0",
-  "description": "Write Agent Skills, and check them against four rules a script can hold: named, small, resolves, tested. Every finding comes with its file, line and fix.",
+  "description": "Arnaud Zheng's Agent Skills. hexagonal-skill-builder writes Agent Skills and checks them against four rules a script can hold: named, small, resolves, tested. Every finding comes with its file, line and fix.",
   "author": {
     "name": "Arnaud Zheng",
     "url": "https://github.com/arnaud-zg"
