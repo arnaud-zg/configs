@@ -7,6 +7,10 @@ optional.
 I built this to stop copy-pasting the same ESLint/Prettier/tsconfig/Lefthook setup into every one of
 my projects.
 
+This repository is also a [Claude Code plugin marketplace](#-claude-code-plugins). Its
+[hexagonal-skill-builder](./plugins/arnaud-zg/README.md) is a linter for Agent Skills (`SKILL.md`):
+it checks every skill against four rules and prints the file, line and fix for each finding.
+
 ```sh
 pnpm add -D @arnaud-zg/configs@0.3.1
 ```

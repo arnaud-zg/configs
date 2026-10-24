@@ -1,0 +1,37 @@
+# @arnaud-zg/configs
+
+> Shareable dev-tooling configs (ESLint, Prettier, tsconfig, tsdown, Lefthook, remark, commitlint)
+> published to npm as @arnaud-zg/configs, and a Claude Code plugin marketplace named arnaud-zg whose
+> plugin hexagonal-skill-builder lints Agent Skills (SKILL.md).
+
+## hexagonal-skill-builder: a linter for Agent Skills
+
+A linter and writing guide for Agent Skills (SKILL.md folders loaded by Claude Code and other coding
+agents). It checks four rules, named, small, resolves and tested, and prints the file, line and fix
+for each finding. Node only, no dependencies, no network, read-only. MIT.
+
+- Install in Claude Code: `/plugin install arnaud-zg --marketplace arnaud-zg/configs`
+- Install in any agent: `npx skills add arnaud-zg/configs --skill hexagonal-skill-builder`
+- Call it: `/arnaud-zg:hexagonal-skill-builder check`, or ask the agent to "check the skills"
+- Run it without an agent: `node <skill folder>/scripts/check.mjs [path ...] [--suite <script>] [--json]`
+
+- [README](https://github.com/arnaud-zg/configs/blob/main/plugins/arnaud-zg/README.md): what it is, install, the four rules, questions
+- [Tutorial](https://github.com/arnaud-zg/configs/blob/main/plugins/arnaud-zg/docs/tutorial.md): a first skill, checked
+- [How-to guides](https://github.com/arnaud-zg/configs/blob/main/plugins/arnaud-zg/docs/how-to.md): CI, commit hooks, JSON output, splitting a long entry
+- [Reference](https://github.com/arnaud-zg/configs/blob/main/plugins/arnaud-zg/docs/reference.md): command, exit codes, what each rule looks for
+- [Explanation](https://github.com/arnaud-zg/configs/blob/main/plugins/arnaud-zg/docs/explanation.md): why a skill's shape is its behaviour
+- [SKILL.md](https://github.com/arnaud-zg/configs/blob/main/plugins/arnaud-zg/skills/hexagonal-skill-builder/SKILL.md): the instructions the agent follows
+
+## @arnaud-zg/configs: shareable dev-tooling configs
+
+- [README](https://github.com/arnaud-zg/configs/blob/main/README.md): install, security, what's inside
+- [Tutorial](https://github.com/arnaud-zg/configs/blob/main/docs/tutorial.md)
+- [How-to guides](https://github.com/arnaud-zg/configs/blob/main/docs/how-to.md)
+- [Reference](https://github.com/arnaud-zg/configs/blob/main/docs/reference.md)
+- [Explanation](https://github.com/arnaud-zg/configs/blob/main/docs/explanation.md)
+
+## Writing a Claude Code plugin in this repository
+
+- [Plugin tutorial](https://github.com/arnaud-zg/configs/blob/main/docs/plugins/tutorial.md)
+- [Plugin how-to guides](https://github.com/arnaud-zg/configs/blob/main/docs/plugins/how-to.md)
+- [Plugin reference](https://github.com/arnaud-zg/configs/blob/main/docs/plugins/reference.md)
