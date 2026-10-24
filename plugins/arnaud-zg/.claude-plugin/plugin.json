@@ -10,6 +10,6 @@
   },
   "license": "MIT",
   "repository": "https://github.com/arnaud-zg/configs",
-  "keywords": ["skills", "agent-skills", "lint", "authoring"],
+  "keywords": ["skills", "agent-skills", "skill-md", "claude-code", "lint", "linter", "authoring"],
   "dependencies": []
 }

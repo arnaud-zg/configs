@@ -15,7 +15,7 @@
       "source": "arnaud-zg",
       "description": "Arnaud Zheng's Agent Skills. hexagonal-skill-builder writes Agent Skills and checks them against four rules a script can hold: named, small, resolves, tested. Every finding comes with its file, line and fix.",
       "category": "development",
-      "tags": ["skills", "lint", "authoring"]
+      "tags": ["skills", "agent-skills", "skill-md", "lint", "authoring"]
     }
   ]
 }

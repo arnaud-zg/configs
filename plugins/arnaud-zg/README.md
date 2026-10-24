@@ -1,11 +1,27 @@
 # hexagonal-skill-builder
 
-Write [Agent Skills](https://code.claude.com/docs/en/skills) that do what they say, and check them
-against four rules a script can hold. Every finding comes with its file, its line and its fix.
+A linter and writing guide for [Agent Skills](https://code.claude.com/docs/en/skills), the
+`SKILL.md` folders that Claude Code and other coding agents load. Write skills that do what they
+say, and check them against four rules a script can hold. Every finding comes with its file, its
+line and its fix.
 
 A skill is a set of instructions a model follows to the letter, so how it is organised is how it
 behaves. A link to a page that moved sends it nowhere, a long entry is paid for on every call, and a
 script nobody tests was only ever watched.
+
+## At a glance
+
+| Question               | Answer                                                                          |
+| ---------------------- | ------------------------------------------------------------------------------- |
+| What is it?            | A linter for Agent Skills (`SKILL.md`), and a guide Claude follows to write one |
+| What does it check?    | Four rules: `named`, `small`, `resolves`, `tested`                              |
+| Where does it run?     | Claude Code, any agent the skills CLI supports, CI, and commit hooks            |
+| How do I install it?   | `/plugin install arnaud-zg --marketplace arnaud-zg/configs`                     |
+| How do I call it?      | Ask Claude to _check the skills_, or type `/arnaud-zg:hexagonal-skill-builder`  |
+| How do I run it in CI? | `node <skill folder>/scripts/check.mjs`, which exits `1` on a finding           |
+| What does it need?     | Node. No dependencies, no network, and it never writes a file                   |
+| Which plugin ships it? | `arnaud-zg`, from the `arnaud-zg` marketplace in `arnaud-zg/configs`            |
+| What is the license?   | MIT                                                                             |
 
 ## 📚 Documentation
 
@@ -114,6 +130,44 @@ gate a commit hook or a CI job as it is.
 Each one is there because a skill once broke it and a model followed it anyway. The stories are in
 [`evidence.md`](skills/hexagonal-skill-builder/evidence.md), and seven mistakes no script can see
 are in [`guards.md`](skills/hexagonal-skill-builder/guards.md).
+
+## Questions
+
+### How do I lint or validate a `SKILL.md` file?
+
+Ask Claude to _check the skills_, or run `node <skill folder>/scripts/check.mjs`. With no path, it
+checks every skill in `.claude/skills`, `.agents/skills`, `skills/` and `plugins/*/skills`. Pass a
+path to check one skill or one folder.
+
+### How do I check Agent Skills in CI or a commit hook?
+
+Copy the skill into the project with the skills CLI, then run the check in a job. It exits `0` when
+every skill holds and `1` on a finding.
+[Fail a build when a skill breaks](docs/how-to.md#fail-a-build-when-a-skill-breaks) has a CI step
+and a Lefthook hook to copy.
+
+### Does it work outside Claude Code?
+
+Yes. `npx skills add arnaud-zg/configs --skill hexagonal-skill-builder` installs it in any agent the
+[skills CLI](https://github.com/vercel-labs/skills) supports, and the check is a plain Node script
+that needs no agent at all.
+
+### How is it different from `claude plugin validate`?
+
+`claude plugin validate` checks that a plugin's manifests are well-formed. This checks what is
+inside each skill: its name and description, its length, that every link and path resolves, and that
+every script is tested.
+
+### Why is the skill called `/arnaud-zg:hexagonal-skill-builder`?
+
+Claude Code names a plugin's skills `<plugin>:<skill>`. The plugin is `arnaud-zg`, which holds every
+skill from this marketplace, and the skill is `hexagonal-skill-builder`. Installed with the skills
+CLI, it is `/hexagonal-skill-builder`.
+
+### Why "hexagonal"?
+
+The entry, `SKILL.md`, is the one port a model reads, and every other page sits behind it by layer,
+as in hexagonal architecture. [Why "hexagonal"](docs/explanation.md#why-hexagonal) says more.
 
 ## 🔒 Know what you're installing
 
