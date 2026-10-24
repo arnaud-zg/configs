@@ -34,7 +34,9 @@ function check(cwd: string, ...args: string[]) {
   const { status, stdout, stderr } = spawnSync(process.execPath, [CHECK, ...args], {
     cwd,
     encoding: "utf8",
-    env: { ...process.env, NO_COLOR: "", FORCE_COLOR: "" },
+    // Only the two variables the check reads: copying process.env would hand the child every
+    // credential in the caller's environment, which the plugin directory's scan holds for review.
+    env: { NO_COLOR: "", FORCE_COLOR: "" },
   });
   return { status, stdout, stderr };
 }
