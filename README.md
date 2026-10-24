@@ -66,15 +66,15 @@ This repository is also a [Claude Code](https://claude.com/claude-code) plugin m
 catalogue of skills, subagents, hooks and MCP servers that install with a version and uninstall
 cleanly, instead of being copy-pasted into `~/.claude/`.
 
-| Plugin                                                                 | What it does                                                                                                                |
-| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| [hexagonal-skill-builder](./plugins/hexagonal-skill-builder/README.md) | Write Agent Skills, and check them against four rules: named, small, resolves, tested. File, line and fix for each finding. |
+| Plugin                                     | What it does                                                                                                                                           |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [arnaud-zg](./plugins/arnaud-zg/README.md) | `hexagonal-skill-builder`: write Agent Skills, and check them against four rules: named, small, resolves, tested. File, line and fix for each finding. |
 
 Install one in Claude Code, or in any agent through the
 [skills CLI](https://github.com/vercel-labs/skills):
 
 ```sh
-/plugin install hexagonal-skill-builder --marketplace arnaud-zg/configs
+/plugin install arnaud-zg --marketplace arnaud-zg/configs
 npx skills add arnaud-zg/configs --skill hexagonal-skill-builder
 ```
 

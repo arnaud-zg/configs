@@ -1,4 +1,4 @@
-# @arnaud-zg/plugin-hexagonal-skill-builder
+# @arnaud-zg/plugin-arnaud-zg
 
 ## 0.1.0
 

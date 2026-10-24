@@ -7,10 +7,7 @@ import { describe, expect, test } from "vitest";
 // same script a person runs, so the shelf never asks of others what it does not do itself.
 
 const root = import.meta.dirname;
-const check = path.join(
-  root,
-  "plugins/hexagonal-skill-builder/skills/hexagonal-skill-builder/scripts/check.mjs",
-);
+const check = path.join(root, "plugins/arnaud-zg/skills/hexagonal-skill-builder/scripts/check.mjs");
 
 function run(...args: string[]) {
   return spawnSync(process.execPath, [check, ...args], { cwd: root, encoding: "utf8" });
