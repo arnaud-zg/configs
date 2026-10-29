@@ -12,7 +12,7 @@ Pin an exact version rather than a range, so updates only land when you choose t
 installing.
 
 ```sh
-pnpm add -D @arnaud-zg/configs@0.3.2 typescript
+pnpm add -D @arnaud-zg/configs@0.4.0 typescript
 ```
 
 ## 2. Add a tsconfig
