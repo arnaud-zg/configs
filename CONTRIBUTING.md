@@ -1,7 +1,7 @@
 # 🤝 Contributing
 
-Thanks for helping improve `@arnaud-zg/configs`. The repo holds the npm package and a Claude Code
-plugin marketplace; the workflow is intentionally lightweight for both.
+Thanks for helping improve `@arnaud-zg/configs`. The workflow is intentionally lightweight. Claude
+Code plugins and Agent Skills live in [arnaud-zg/skills](https://github.com/arnaud-zg/skills).
 
 ## Setup
 
@@ -26,10 +26,9 @@ git push -u origin my-change
 gh pr create --fill
 ```
 
-`pnpm changeset` writes a file into `.changeset/` recording which packages your change affects and
-how much to bump them — the npm package, a plugin, or both. Commit it with your work; the release
-flow consumes it later. If the change needs no release at all, `pnpm changeset add --empty` says so
-explicitly.
+`pnpm changeset` writes a file into `.changeset/` recording how much your change bumps the package.
+Commit it with your work; the release flow consumes it later. If the change needs no release at all,
+`pnpm changeset add --empty` says so explicitly.
 
 Commit messages follow Conventional Commits: `type(scope): description`, types are `feat`, `fix`,
 `test`, `refactor`, `chore`, `docs`, `perf` (append `!` before the colon for a breaking change).

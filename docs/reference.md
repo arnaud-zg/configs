@@ -56,14 +56,13 @@ Not shipped to consumers: `devDependencies` never propagate.
 | `pnpm prepack`   | `pnpm build` (runs automatically before `pnpm pack` / `pnpm publish`)                 |
 | `pnpm prepare`   | `lefthook install` (runs automatically after `pnpm install`)                          |
 
-Release scripts, covering the npm package and every plugin in one flow — see
-[How-to](./how-to.md#release-a-new-version):
+Release scripts — see [How-to](./how-to.md#release-a-new-version):
 
 | Script                 | Runs                                                                                                                                                                                  |
 | ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm changeset`       | `changeset` — records which packages a change affects and how much to bump them                                                                                                       |
+| `pnpm changeset`       | `changeset` — records how much a change bumps the package                                                                                                                             |
 | `pnpm release:version` | `scripts/release-version.mjs`: on a new `release/` branch, `changeset version`, `scripts/sync-versions.mjs` and `pnpm install --lockfile-only`, then commits, pushes and opens the PR |
-| `pnpm release`         | `scripts/release.mjs`: for every version without a GitHub release, `pnpm build` and `changeset publish --no-git-tag` (package only), then the tag, its push, and the GitHub release   |
+| `pnpm release`         | `scripts/release.mjs`: for every version without a GitHub release, `pnpm build` and `changeset publish --no-git-tag`, then the tag, its push, and the GitHub release                  |
 
 ## Package layout
 
@@ -80,14 +79,12 @@ dist/         base.js, base.d.ts (built from tsdown/base.ts at publish time, git
 
 .changeset/       one Markdown file per unreleased change; the release flow consumes these
 scripts/          release helpers, run by pnpm release:version and pnpm release
-.claude-plugin/   marketplace.json — the Claude Code plugin catalogue
-plugins/          published plugins (empty for now)
-templates/        plugin-template, copied to start a new plugin
-docs/plugins/     plugin documentation
+.claude-plugin/   marketplace.json — a redirect to arnaud-zg/skills, removed in the next minor release
+plugins/          a README pointing to arnaud-zg/skills, removed with it
 ```
 
-The last five are outside `files`, so the marketplace shares the repository without shipping in the
-npm tarball. See [the plugin docs](./plugins/explanation.md) for what they are.
+The last four are outside `files`, so none of them ship in the npm tarball. The Claude Code plugins
+live in [arnaud-zg/skills](https://github.com/arnaud-zg/skills).
 
 `package.json`'s `files` ships the eight public directories above plus `internal/` and `LICENSE`.
 `dist/` doesn't exist in the repo itself; it's produced by the `prepack` script right before

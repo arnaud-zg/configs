@@ -7,9 +7,9 @@ optional.
 I built this to stop copy-pasting the same ESLint/Prettier/tsconfig/Lefthook setup into every one of
 my projects.
 
-This repository is also a [Claude Code plugin marketplace](#-claude-code-plugins). Its
-[hexagonal-skill-builder](./plugins/arnaud-zg/README.md) is a linter for Agent Skills (`SKILL.md`):
-it checks every skill against four rules and prints the file, line and fix for each finding.
+Looking for the Claude Code plugins and Agent Skills? They moved to
+[arnaud-zg/skills](https://github.com/arnaud-zg/skills), which uses this package for all its
+tooling.
 
 ```sh
 pnpm add -D @arnaud-zg/configs@0.3.1
@@ -64,40 +64,18 @@ Don't install anything, from me or anyone else, that you haven't verified yourse
 | `@arnaud-zg/configs/remark`          | remark-lint recommended preset                   |
 | `@arnaud-zg/configs/commitlint`      | Conventional Commits, mandatory scope            |
 
-## 🤖 Claude Code plugins
+## 🤖 Claude Code plugins and Agent Skills
 
-This repository is also a [Claude Code](https://claude.com/claude-code) plugin marketplace: a
-catalogue of skills, subagents, hooks and MCP servers that install with a version and uninstall
-cleanly, instead of being copy-pasted into `~/.claude/`.
-
-| Plugin                                     | What it does                                                                                                                                           |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| [arnaud-zg](./plugins/arnaud-zg/README.md) | `hexagonal-skill-builder`: write Agent Skills, and check them against four rules: named, small, resolves, tested. File, line and fix for each finding. |
-
-Install one in Claude Code, or in any agent through the
-[skills CLI](https://github.com/vercel-labs/skills):
+They live in [arnaud-zg/skills](https://github.com/arnaud-zg/skills), including
+`hexagonal-skill-builder`, a linter for Agent Skills (`SKILL.md`):
 
 ```sh
-/plugin install arnaud-zg --marketplace arnaud-zg/configs
-npx skills add arnaud-zg/configs --skill hexagonal-skill-builder
+/plugin marketplace add arnaud-zg/skills
+/plugin install arnaud-zg@arnaud-zg-skills
 ```
 
-Each plugin's README shows how to pin the version you reviewed, and how to give it to a whole team
-from `.claude/settings.json`. `templates/plugin-template/` is the starting point to add a plugin.
-None of this ships in the npm package: the marketplace is consumed with `git clone`, the configs
-with `pnpm add`.
-
-The same warning as above applies, more sharply: a plugin's hooks run shell commands on your machine
-and its MCP servers talk to remote endpoints, with no sandbox. Read `hooks/`, `.mcp.json` and
-`dependencies` before installing anything, here or anywhere else.
-
-- 🚀 **[Tutorial](./docs/plugins/tutorial.md)**: build and install your first plugin, end to end.
-- 🛠️ **[How-to guides](./docs/plugins/how-to.md)**: add a skill, agent, hook, MCP server or
-  dependency; test locally; release; rename.
-- 📖 **[Reference](./docs/plugins/reference.md)**: every manifest field, component discovery rule,
-  and CLI command.
-- 💡 **[Explanation](./docs/plugins/explanation.md)**: what skills, plugins and marketplaces are,
-  and why the layers are split that way.
+Until the next minor release, the `arnaud-zg` marketplace in this repository still serves that
+plugin from its new home, so existing installs keep updating while you switch.
 
 ## License
 
