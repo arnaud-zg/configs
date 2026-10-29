@@ -79,11 +79,9 @@ dist/         base.js, base.d.ts (built from tsdown/base.ts at publish time, git
 
 .changeset/       one Markdown file per unreleased change; the release flow consumes these
 scripts/          release helpers, run by pnpm release:version and pnpm release
-.claude-plugin/   marketplace.json — a redirect to arnaud-zg/skills, removed in the next minor release
-plugins/          a README pointing to arnaud-zg/skills, removed with it
 ```
 
-The last four are outside `files`, so none of them ship in the npm tarball. The Claude Code plugins
+The last two are outside `files`, so none of them ship in the npm tarball. The Claude Code plugins
 live in [arnaud-zg/skills](https://github.com/arnaud-zg/skills).
 
 `package.json`'s `files` ships the eight public directories above plus `internal/` and `LICENSE`.
