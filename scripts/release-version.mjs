@@ -1,15 +1,14 @@
 /**
  * `pnpm release:version` — open the release PR.
  *
- * Applies every pending changeset on a new `release/` branch and opens a PR for it. What gets bumped
- * is whatever the changesets name — the npm package, any plugin, or both. `main` is protected, so
- * versions only reach it through that PR, and merging it is what ships a plugin to users. After the
- * merge, `pnpm release` publishes and tags.
+ * Applies every pending changeset on a new `release/` branch and opens a PR for it. `main` is
+ * protected, so versions only reach it through that PR. After the merge, `pnpm release` publishes
+ * and tags.
  */
 import { readdirSync } from "node:fs";
 import path from "node:path";
 
-import { plugins, readJson, root, run, runVisible, startFromMain } from "./release-shared.mjs";
+import { readJson, root, run, runVisible, startFromMain } from "./release-shared.mjs";
 
 startFromMain();
 
@@ -21,12 +20,8 @@ if (pending.length === 0) {
   process.exit(0);
 }
 
-// The package.json changesets bumps, for the npm package and each plugin.
-const versions = () =>
-  new Map([
-    [readJson("package.json").name, readJson("package.json").version],
-    ...plugins().map((plugin) => [plugin.name, readJson(`${plugin.dir}/package.json`).version]),
-  ]);
+// The package.json version changesets bumps.
+const versions = () => new Map([[readJson("package.json").name, readJson("package.json").version]]);
 
 // Branch first, so a step that fails below leaves its changes here rather than on main.
 const branch = `release/${new Date().toISOString().slice(0, 19).replace("T", "-").replaceAll(":", "")}`;

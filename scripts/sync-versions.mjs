@@ -1,28 +1,21 @@
 /**
  * Propagate versions after `changeset version`.
  *
- * Changesets owns `package.json` versions and changelogs. It knows nothing about the two other
- * places a version has to appear in this repository:
- *
- *   - each plugin's `.claude-plugin/plugin.json`, the version Claude Code installs and
- *     `claude plugin tag` tags. Marketplace entries carry no version — plugin.json would override
- *     it anyway — so there is nothing to sync into the catalogue;
- *   - the pinned `@arnaud-zg/configs@x.y.z` install examples in the docs, so they never recommend
- *     a version older than the one being released.
+ * Changesets owns `package.json` versions and changelogs. It knows nothing about the pinned
+ * `@arnaud-zg/configs@x.y.z` install examples in the docs, which this keeps from recommending a
+ * version older than the one being released.
  *
  * Run as part of `pnpm release:version`, never on its own.
  */
-import { readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
 
 const readJson = (file) => JSON.parse(readFileSync(file, "utf8"));
-const writeJson = (file, value) => writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`);
 
 const changed = [];
 
-// 1. The npm package version, into every pinned install example.
 const packageVersion = readJson(path.join(root, "package.json")).version;
 const pinned = /@arnaud-zg\/configs@\d+\.\d+\.\d+/g;
 
@@ -33,33 +26,6 @@ for (const file of ["README.md", "docs/tutorial.md"]) {
   if (before !== after) {
     writeFileSync(absolute, after);
     changed.push(`${file} → @arnaud-zg/configs@${packageVersion}`);
-  }
-}
-
-// 2. Each plugin's package.json version, into its plugin manifest.
-const pluginsDir = path.join(root, "plugins");
-
-const pluginDirs = readdirSync(pluginsDir, { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
-  .map((entry) => entry.name);
-
-for (const name of pluginDirs) {
-  const packageJsonPath = path.join(pluginsDir, name, "package.json");
-  const manifestPath = path.join(pluginsDir, name, ".claude-plugin", "plugin.json");
-
-  let version;
-  try {
-    version = readJson(packageJsonPath).version;
-  } catch {
-    // A plugin without a package.json is outside the changesets flow; leave it alone.
-    continue;
-  }
-
-  const manifest = readJson(manifestPath);
-  if (manifest.version !== version) {
-    manifest.version = version;
-    writeJson(manifestPath, manifest);
-    changed.push(`plugins/${name}/.claude-plugin/plugin.json → ${version}`);
   }
 }
 
