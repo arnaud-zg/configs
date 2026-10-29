@@ -65,6 +65,17 @@ proportionate to run it for. A hand-maintained `CHANGELOG.md` and the native `pn
 (see below), so CI wouldn't add a review step that doesn't already exist. Revisit this if the repo
 ever grows into multiple packages that need coordinated releases.
 
+## Why the Claude Code plugins moved out
+
+This repository used to host a Claude Code plugin marketplace next to the npm package. They shared a
+git history and nothing else: the package is consumed with `pnpm add` and released to npm, the
+plugins with `git clone` and released by tag. Keeping both meant two release flows in one script,
+plugin tests in the package's test run, and a `files` list that had to exclude half the repository.
+
+They now live in [arnaud-zg/skills](https://github.com/arnaud-zg/skills), which consumes this
+package like any other project. That is the better test of it anyway: every config here is used from
+`node_modules` by a real repository, not from a relative path.
+
 ## Why commitlint instead of a hand-rolled script
 
 The `commit-msg` hook used to run a hand-rolled shell script (`grep -qE` against a fixed pattern).

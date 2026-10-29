@@ -59,7 +59,6 @@
     "remark",
     "commitlint",
     "docs",
-    "!docs/plugins",
     "LICENSE",
     "!**/*.test.ts"
   ],

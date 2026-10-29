@@ -13,9 +13,10 @@ directly on `main`.
 
 ## Plugins and skills
 
-To add or change a plugin or skill, follow [docs/plugins/how-to.md](./docs/plugins/how-to.md). Draft
-in `~/.claude/skills/<name>/`, evaluate, then move it into `plugins/`. Run
-`claude plugin validate . --strict` before committing.
+Claude Code plugins and Agent Skills live in
+[arnaud-zg/skills](https://github.com/arnaud-zg/skills), not here. This repository only keeps a
+redirecting `.claude-plugin/marketplace.json` and `plugins/arnaud-zg/README.md` until the next minor
+release.
 
 ## Before committing
 

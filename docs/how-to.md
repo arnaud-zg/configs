@@ -148,8 +148,9 @@ import base from "@arnaud-zg/configs/remark/docs";
 export default base;
 ```
 
-This repository uses it for exactly that reason: `plugins/` and `templates/` carry `SKILL.md` and
-agent files whose YAML frontmatter the base config misreads as an indented list.
+Claude Code plugin repositories need it for exactly that reason: `SKILL.md` and agent files start
+with YAML frontmatter that the base config misreads as an indented list.
+[arnaud-zg/skills](https://github.com/arnaud-zg/skills) uses it.
 
 ## Run this repo's own tests
 
@@ -162,8 +163,8 @@ pnpm typecheck && pnpm lint && pnpm lint:md && pnpm format:check && pnpm test
 
 ## Release a new version
 
-One flow releases everything — the npm package and every plugin — with the same three commands.
-Changesets is the entry point, and you never edit a version, a changelog or a tag by hand.
+Three commands release the npm package. Changesets is the entry point, and you never edit a version,
+a changelog or a tag by hand.
 
 ```sh
 pnpm changeset          # 1. in the PR that makes the change
@@ -179,13 +180,11 @@ Any pull request that should show up in a release carries a changeset:
 pnpm changeset
 ```
 
-It asks which packages changed and how much to bump them, then writes a Markdown file into
-`.changeset/`. Commit that file with your work. Plugins appear in the list next to
-`@arnaud-zg/configs` as `@arnaud-zg/plugin-<name>`, because each one has a private `package.json`
-beside its `plugin.json` — see [why](#why-plugins-carry-a-packagejson). To skip the prompts:
+It asks how much to bump the package, then writes a Markdown file into `.changeset/`. Commit that
+file with your work. To skip the prompts:
 
 ```sh
-pnpm changeset add --minor @arnaud-zg/plugin-hello-tools -m "Add the audit-deps skill"
+pnpm changeset add --minor @arnaud-zg/configs -m "Add the react-native tsconfig variant"
 ```
 
 For a change that needs no release at all, `pnpm changeset add --empty` records that decision
@@ -200,20 +199,15 @@ pnpm release:version
 Run it with a clean working tree. It switches to an up-to-date `main` and, if any changesets are
 pending, does the rest:
 
-| Step                                | What it does                                                                                                                     |
-| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `git switch -c release/<timestamp>` | `main` is protected, so versions only reach it through a PR                                                                      |
-| `changeset version`                 | consumes `.changeset/*.md`, bumps every affected `package.json`, writes the changelogs                                           |
-| `node scripts/sync-versions.mjs`    | copies each plugin's new version into its `plugin.json`, and rewrites the pinned `@arnaud-zg/configs@x.y.z` examples in the docs |
-| `pnpm install --lockfile-only`      | refreshes the lockfile for the bumped workspace versions                                                                         |
-| commit, push, `gh pr create`        | opens the PR, listing every bump                                                                                                 |
+| Step                                | What it does                                                           |
+| ----------------------------------- | ---------------------------------------------------------------------- |
+| `git switch -c release/<timestamp>` | `main` is protected, so versions only reach it through a PR            |
+| `changeset version`                 | consumes `.changeset/*.md`, bumps `package.json`, writes the changelog |
+| `node scripts/sync-versions.mjs`    | rewrites the pinned `@arnaud-zg/configs@x.y.z` examples in the docs    |
+| `pnpm install --lockfile-only`      | refreshes the lockfile                                                 |
+| commit, push, `gh pr create`        | opens the PR, listing the bump                                         |
 
 With no pending changesets it says so and stops. Review the PR, then merge it.
-
-The sync step exists because changesets only understands `package.json`, while Claude Code reads a
-plugin's version from `plugin.json`. Marketplace entries carry no version — `plugin.json` would
-override it at install time anyway — so there is nothing to sync into the catalogue, and
-`marketplace.unit.test.ts` fails if one appears.
 
 ### 3. Release, after the PR merges
 
@@ -221,53 +215,39 @@ override it at install time anyway — so there is nothing to sync into the cata
 pnpm release
 ```
 
-It switches to an up-to-date `main` and works out what is new by itself: every current version — the
-package's and each plugin's — that has no GitHub release yet. A plugin still at `0.0.0` has not been
-versioned yet and is skipped. For each one:
-
-| Artifact             | npm                                                       | Tag                                                                        | GitHub release notes                         |
-| -------------------- | --------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------- |
-| `@arnaud-zg/configs` | published by `changeset publish`                          | `v0.3.1`, annotated with its changelog section                             | its section of `CHANGELOG.md`                |
-| each plugin          | none — see [below](#what-a-plugin-release-actually-ships) | `<name>--v0.2.0`, by `claude plugin tag`, which validates the plugin first | its section of `plugins/<name>/CHANGELOG.md` |
-
-The tags are pushed, then the GitHub releases created. A plugin's release is never marked "Latest",
-so the package's keeps that spot on the repository page.
+It switches to an up-to-date `main` and checks whether the package's current version has a GitHub
+release yet. If not, it builds, publishes to npm with `changeset publish --no-git-tag`, tags
+`v<version>` annotated with its changelog section, pushes the tag and creates the GitHub release
+with that section as its notes.
 
 The npm publish runs before anything is tagged, so a failed publish leaves nothing half-released.
 Every step is safe to repeat: fix whatever stopped it and run `pnpm release` again. With nothing
 new, it says so and stops.
 
-It needs `gh auth login`, the `claude` CLI on your `PATH`, and `npm login` when the package has a
-new version. `changeset publish` runs with `--no-git-tag`, because its monorepo tag format
-(`@arnaud-zg/configs@0.3.1`) matches neither convention this repository uses.
+It needs `gh auth login` and `npm login`. `changeset publish` runs with `--no-git-tag`, because its
+monorepo tag format (`@arnaud-zg/configs@0.3.1`) doesn't match `v<version>`.
 
-### What a plugin release actually ships
+## Use these configs across a repository
 
-Nothing is uploaded anywhere — the marketplace _is_ this git repository — but merging a plugin
-change to `main` does not ship it. Claude Code decides whether an installed plugin has an update by
-comparing versions, and it reads the version from `plugin.json` first. Until that string changes,
-`claude plugin update` reports the plugin as already at the latest version, however many commits
-land.
+To give another repository the same tooling, add the package and every peer at once, then point each
+tool at its subpath. [arnaud-zg/skills](https://github.com/arnaud-zg/skills) is set up exactly this
+way.
 
-The release PR from step 2 is what ships a plugin: merging it changes the version in `plugin.json`.
-Users then get the new code with `claude plugin update <name>`, or on their next auto-update if they
-turned it on for this marketplace — it is off by default for marketplaces not run by Anthropic.
+```sh
+pnpm add -D @arnaud-zg/configs prettier @ianvs/prettier-plugin-sort-imports \
+  prettier-plugin-packagejson eslint @eslint/js typescript-eslint eslint-config-prettier typescript \
+  remark-cli remark-preset-lint-recommended remark-frontmatter remark-gfm lefthook @commitlint/cli \
+  @commitlint/config-conventional
+```
 
-Two consequences:
+| File                    | Content                                                                             |
+| ----------------------- | ----------------------------------------------------------------------------------- |
+| `package.json`          | `"prettier": "@arnaud-zg/configs/prettier"`                                         |
+| `eslint.config.mjs`     | spread `@arnaud-zg/configs/eslint`, plus `parserOptions.project` for your tsconfigs |
+| `tsconfig.json`         | `"extends": "@arnaud-zg/configs/tsconfig/base.json"`, with your own `include`       |
+| `.remarkrc.mjs`         | `export default` from `@arnaud-zg/configs/remark/docs`                              |
+| `commitlint.config.mjs` | `export default` from `@arnaud-zg/configs/commitlint`                               |
+| `lefthook.yml`          | `extends: [node_modules/@arnaud-zg/configs/lefthook/lefthook.yml]`                  |
 
-- A plugin change merged to `main` waits for the next release PR, so several can ship together.
-- Someone who installs the plugin in that window gets the new code under the old version number.
-  Keep the window short.
-
-Catalogue edits in `marketplace.json` — descriptions, categories — carry no version and reach users
-on their next `claude plugin marketplace update`.
-
-The tag from step 3 does a narrower job: it makes the plugin resolvable by a dependency range like
-`ts-base@^1.2.0`, and gives a `git-subdir` entry something to pin.
-
-### Why plugins carry a package.json
-
-A plugin's real manifest is `.claude-plugin/plugin.json`. The `package.json` beside it is private,
-never published, and exists only so changesets can see the plugin as a workspace package and version
-it; `scripts/sync-versions.mjs` copies the result across. Keeping two files in step is the price of
-one release flow instead of two — the alternative was versioning every plugin by hand.
+Leave the config files themselves out of `tsconfig.json`'s `include`: the subpaths ship no type
+declarations, so a strict typecheck reports them as untyped modules.
