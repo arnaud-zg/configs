@@ -12,7 +12,7 @@ Looking for the Claude Code plugins and Agent Skills? They moved to
 tooling.
 
 ```sh
-pnpm add -D @arnaud-zg/configs@0.3.1
+pnpm add -D @arnaud-zg/configs@0.3.2
 ```
 
 Always pin the exact version above (not a range like `^x.y.z`, and not `latest`), so an update to
