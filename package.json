@@ -1,6 +1,6 @@
 {
   "name": "@arnaud-zg/configs",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "description": "Shareable dev-tooling configs: ESLint, Prettier, tsconfig, tsdown, Lefthook, remark, and commitlint.",
   "keywords": [
     "eslint-config",
