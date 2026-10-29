@@ -74,8 +74,8 @@ They live in [arnaud-zg/skills](https://github.com/arnaud-zg/skills), including
 /plugin install arnaud-zg@arnaud-zg-skills
 ```
 
-Until the next minor release, the `arnaud-zg` marketplace in this repository still serves that
-plugin from its new home, so existing installs keep updating while you switch.
+If you still have the old `arnaud-zg` marketplace from this repository, it no longer resolves: run
+`/plugin marketplace remove arnaud-zg` and add `arnaud-zg/skills` as above.
 
 ## License
 
