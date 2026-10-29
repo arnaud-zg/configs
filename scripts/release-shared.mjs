@@ -2,7 +2,7 @@
  * Helpers shared by `scripts/release-version.mjs` and `scripts/release.mjs`. Not a release step.
  */
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 
 export const root = path.resolve(import.meta.dirname, "..");
@@ -44,17 +44,6 @@ export const succeeds = (file, args) => {
     return false;
   }
 };
-
-// Every plugin in the changesets flow: a directory under plugins/ with a package.json.
-export const plugins = () =>
-  readdirSync(path.join(root, "plugins"), { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => `plugins/${entry.name}`)
-    .filter((dir) => existsSync(path.join(root, dir, "package.json")))
-    .map((dir) => {
-      const manifest = readJson(`${dir}/.claude-plugin/plugin.json`);
-      return { dir, name: manifest.name, version: manifest.version };
-    });
 
 // Both release commands work from an up-to-date main with nothing uncommitted, so what they version
 // or tag is exactly what is on origin/main.
